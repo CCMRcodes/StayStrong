@@ -6,13 +6,13 @@ Authored by the following,
 
 Laura J. Damschroder , MPH, MSc<sup>7</sup> Lorraine R. Buis, PhD<sup>1</sup> Felicia A. McCant, MSSW<sup>2</sup> H. Myra Kim, ScD<sup>7</sup> Richard Evans, MS<sup>7</sup> Eugene Z. Oddone, MD, MHSc<sup>2,4</sup> Lori A. Bastian, MD, MPH<sup>5,6</sup> Gwen Hooks, MA<sup>7</sup> Reema Kadri, MLIS<sup>1</sup> Courtney White-Clark, MS<sup>2</sup> Caroline R. Richardson, MD<sup>1</sup> Jennifer M. Gierisch, PhD, MPH<sup>2,3,4</sup>
 
-University of Michigan, Department of Family Medicine, Ann Arbor, MI 48104
-Durham Center of Innovation to Accelerate Discovery and Practice Transformation (ADAPT), Durham VA Health Care System, Durham, NC, USA
-Department of Population Health Sciences, Duke University Medical Center, Durham, NC, USA
-Division of General Internal Medicine, Department of Medicine, Duke University Medical Center, Durham, NC, USA
-Division of General Internal Medicine, Department of Medicine, Yale University, New Haven, CT
-Pain Research, Informatics, Multimorbidities, and Education Center, VA Connecticut, West Haven, CT
-VA Center for Clinical Management Research, VA Ann Arbor Healthcare System, Ann Arbor, MI, USA
+<sup>1</sup>University of Michigan, Department of Family Medicine, Ann Arbor, MI 48104  
+<sup>2</sup>Durham Center of Innovation to Accelerate Discovery and Practice Transformation (ADAPT), Durham VA Health Care System, Durham, NC, USA  
+<sup>3</sup>Department of Population Health Sciences, Duke University Medical Center, Durham, NC, USA  
+<sup>4</sup>Division of General Internal Medicine, Department of Medicine, Duke University Medical Center, Durham, NC, USA  
+<sup>5</sup>Division of General Internal Medicine, Department of Medicine, Yale University, New Haven, CT  
+<sup>6</sup>Pain Research, Informatics, Multimorbidities, and Education Center, VA Connecticut, West Haven, CT  
+<sup>7</sup>VA Center for Clinical Management Research, VA Ann Arbor Healthcare System, Ann Arbor, MI, USA  
 
 ## Abstract
 
@@ -40,4 +40,4 @@ Trial Registration: clinicaltrials.gov identifier: NCT02360293
 
 ## Analyses
 
-Complete analyses can be found at the project bookdown.org/revans_evans/Stay_Strong_Main_Analsyes (requires google login)
+Complete analyses can be found at the project [bookdown website](bookdown.org/revans_evans/Stay_Strong_Main_Analyses) (requires google login)
