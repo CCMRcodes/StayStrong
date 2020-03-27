@@ -40,4 +40,4 @@ Trial Registration: clinicaltrials.gov identifier: NCT02360293
 
 ## Analyses
 
-Complete analyses can be found at the project [bookdown website](bookdown.org/revans_evans/Stay_Strong_Main_Analyses) (requires google login)
+Complete analyses can be found at the project <a href="https://bookdown.org/revans_evans/stay_strong_main_analyses/" target="_blank">bookdown website</a>(requires google login).
