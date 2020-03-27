@@ -4,7 +4,7 @@ This repository contains code and documentation to reproduce the results of the 
 
 Authored by the following,
 
-Laura J. Damschroder , MPH, MSc^7 Lorraine R. Buis, PhD^1 Felicia A. McCant, MSSW^2 H. Myra Kim, ScD^7 Richard Evans, MS^7 Eugene Z. Oddone, MD, MHSc^{2,4} Lori A. Bastian, MD, MPH^{5,6} Gwen Hooks, MA^7 Reema Kadri, MLIS^1 Courtney White-Clark, MS^2 Caroline R. Richardson, MD^1 Jennifer M. Gierisch, PhD, MPH^{2,3,4}
+Laura J. Damschroder , MPH, MSc<sup>7</sup> Lorraine R. Buis, PhD<sup>1</sup> Felicia A. McCant, MSSW<sup>2</sup> H. Myra Kim, ScD<sup>7</sup> Richard Evans, MS<sup>7</sup> Eugene Z. Oddone, MD, MHSc<sup>2,4</sup> Lori A. Bastian, MD, MPH<sup>5,6</sup> Gwen Hooks, MA<sup>7</sup> Reema Kadri, MLIS<sup>1</sup> Courtney White-Clark, MS<sup>2</sup> Caroline R. Richardson, MD<sup>1</sup> Jennifer M. Gierisch, PhD, MPH<sup>2,3,4</sup>
 
 University of Michigan, Department of Family Medicine, Ann Arbor, MI 48104
 Durham Center of Innovation to Accelerate Discovery and Practice Transformation (ADAPT), Durham VA Health Care System, Durham, NC, USA
@@ -40,4 +40,4 @@ Trial Registration: clinicaltrials.gov identifier: NCT02360293
 
 ## Analyses
 
-Complete analyses can be found at the project [bookdown website](bookdown.org/revans_evans/Stay_Strong_Main_Analsyes) (requires google login)
+Complete analyses can be found at the project bookdown.org/revans_evans/Stay_Strong_Main_Analsyes (requires google login)
