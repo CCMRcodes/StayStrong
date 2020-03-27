@@ -1,0 +1,631 @@
+# Process Data
+
+```{r}
+library(janitor) # simple table (tabyl) creation
+```
+
+Tidying Vibrent
+
+```{r}
+colnames(vibrent) <- make_clean_names(colnames(vibrent))
+
+vibrentAM <- vibrent %>%
+  # remove testing accounts
+  filter(!grepl("[A-Za-z]", program_code)) %>%
+  select(
+    program_code,
+    measurement_date,
+    contains("active_minutes")
+  ) %>%
+  mutate(measurement_date = as.Date(measurement_date, "%m-%d-%Y")) %>%
+  mutate_at(grep("active", colnames(.)), as.integer) %>%
+  distinct()
+```
+
+## Deduplicate
+
+```{r}
+dt <- data.table::as.data.table(vibrentAM)
+data.table::setkey(dt, program_code, measurement_date)
+dt <- dt[duplicated(dt, by = data.table::key(dt))]
+
+dim(dt)
+```
+
+159 duplicate records (318 items to reconcile). We will take the last row for duplicated measurements as the actual values on that day, since they are usually just updated values. For example,
+
+```{r, echo = FALSE, eval = TRUE}
+dt %>% filter(program_code == "237-975" & measurement_date == as.Date("2018-05-20"))
+```
+
+the last row represents the latest measurement in a day, with subject **237-975**, the *lightly_active_minutes* are slightly updated.
+
+Another example,
+
+```{r, echo = FALSE, eval = TRUE}
+dt %>% filter(program_code == "236-294" & measurement_date == as.Date("2018-05-21"))
+```
+
+This does not prove that all cases will be the same, but it seems as solid a rule as any to proceed.
+
+```{r}
+vibrentAM <- vibrentAM %>%
+  left_join(dt %>%
+              mutate(dup = 1) %>%
+              select(program_code, measurement_date, dup),
+            by = c("program_code", "measurement_date")) %>%
+  mutate(dup = ifelse(is.na(dup), 0, dup)) %>%
+  group_by(program_code, measurement_date) %>%
+  mutate(cnt = row_number()) %>%
+  ungroup() %>%
+  filter((dup == 0 & cnt == 1) | (dup == 1 & cnt == 2)) %>%
+  select(-dup, -cnt)
+
+rm(dt)
+```
+
+Attach "Arm" and Reduce to **only** those at Baseline,
+
+```{r}
+vibrentAM <- arms %>%
+  rename(program_code = Program_Code) %>%
+  select(program_code, arm) %>%
+  left_join(vibrentAM, by = "program_code")
+```
+
+## Active Minutes
+
+### Baseline
+
+Reduce Baseline data to only the small amount that we need for this project.
+
+```{r}
+baseline <- baseline %>%
+  select(
+    VibrentID,
+    Sex,
+    Randomized_Date,
+    vig_min_day,
+    mod_min_day,
+    vig_mod_min,
+    activeMinutes
+  )
+
+glimpse(baseline)
+```
+
+### Qualtrics/Survey Collected
+
+#### 6-Month
+
+```{r}
+sixmoAM <- sixmo$Physical_Activity %>%
+  mutate(
+    Vigorous_min = ifelse(Vigorous_min == 1440,
+                          NA_integer_, 
+                          Vigorous_min),
+    Moderate_Min = ifelse(Moderate_Min == 1440, 
+                          NA_integer_, 
+                          Moderate_Min),
+    vig_min_day  = ifelse(Vigorous_Activity != 0,
+                          Vigorous_min * Vigorous_Activity,
+                          NA_real_),
+    mod_min_day  = ifelse(Moderate_Activity != 0,
+                          Moderate_Min * Moderate_Activity,
+                          NA_real_)
+    ) %>%
+  mutate(
+    vig_mod_min = rowSums(.[c("vig_min_day", "mod_min_day")], na.rm = TRUE)
+  ) %>%
+  select(
+    VibrentID,
+    vig_min_day,
+    mod_min_day,
+    vig_mod_min
+    )
+
+head(sixmoAM) %>% tableStyle()
+```
+
+6-Month Active Minute Distributions
+
+
+```{r, echo = FALSE, eval = TRUE}
+source('functions/theme_trueMinimal.R')
+theme_set(theme_trueMinimal(16))
+
+sixmoAM %>%
+  reshape2::melt(id.vars = "VibrentID") %>%
+  mutate(variable = factor(variable,
+                           levels = c("vig_min_day",
+                                      "mod_min_day",
+                                      "vig_mod_min"),
+                           labels = c("Vigorous Min/Day",
+                                      "Moderate Min/Day",
+                                      "Vigorous+Moderate Min/Day"))) %>%
+  ggplot() %>%
+  add(geom_density(aes(value, 
+                       group = variable, 
+                       fill = variable), alpha = 0.5)) %>%
+  add(theme(legend.position = c(0.8, 0.8))) %>%
+  add(scale_fill_brewer(palette = "Set2")) %>%
+  add(labs(
+    x = "\nActive Minutes",
+    y = "Density\n",
+    fill = ""
+  ))
+```
+
+Attach all StayStrong Participants
+
+```{r}
+sixmoAM <- sixmoAM %>%
+  right_join(
+    arms %>%
+      select(Program_Code),
+    by = c("VibrentID" = "Program_Code")
+  )
+```
+
+#### 12-Month
+
+```{r}
+twelvemoAM <- twelvemo$Physical_Activity %>%
+  mutate(
+    Vigorous_min = ifelse(Vigorous_min == 1440,
+                          NA_integer_, 
+                          Vigorous_min),
+    Moderate_Min = ifelse(Moderate_Min == 1440, 
+                          NA_integer_, 
+                          Moderate_Min),
+    vig_min_day  = ifelse(Vigorous_Activity != 0,
+                          Vigorous_min * Vigorous_Activity,
+                          NA_real_),
+    mod_min_day  = ifelse(Moderate_Activity != 0,
+                          Moderate_Min * Moderate_Activity,
+                          NA_real_)
+    ) %>%
+  mutate(
+    vig_mod_min = rowSums(.[c("vig_min_day", "mod_min_day")], na.rm = TRUE)
+  ) %>%
+  select(
+    VibrentID,
+    vig_min_day,
+    mod_min_day,
+    vig_mod_min
+    )
+
+head(twelvemoAM) %>% tableStyle()
+```
+
+12-Month Active Minute Distributions
+
+
+```{r, echo = FALSE, eval = TRUE}
+twelvemoAM %>%
+  reshape2::melt(id.vars = "VibrentID") %>%
+  mutate(variable = factor(variable,
+                           levels = c("vig_min_day",
+                                      "mod_min_day",
+                                      "vig_mod_min"),
+                           labels = c("Vigorous Min/Day",
+                                      "Moderate Min/Day",
+                                      "Vigorous+Moderate Min/Day"))) %>%
+  ggplot() %>%
+  add(geom_density(aes(value, 
+                       group = variable, 
+                       fill = variable), alpha = 0.5)) %>%
+  add(theme(legend.position = c(0.8, 0.8))) %>%
+  add(scale_fill_brewer(palette = "Set2")) %>%
+  add(labs(
+    x = "\nActive Minutes",
+    y = "Density\n",
+    fill = ""
+  ))
+```
+
+Definitely going to require some cleaning in the tails.
+
+Attach all StayStrong Participants
+
+```{r}
+twelvemoAM <- twelvemoAM %>%
+  right_join(
+    arms %>%
+      select(Program_Code),
+    by = c("VibrentID" = "Program_Code")
+  )
+```
+
+### Vibrent Collected
+
+Need to aggregate each type of active minute by week for each person.
+
+```{r}
+# takes a minute
+vibrentAM <- vibrentAM %>%
+  mutate(meas_week = lubridate::floor_date(measurement_date, unit = "week")) %>%
+  group_by(program_code, meas_week) %>%
+  summarize(
+    VAM = sum(very_active_minutes,    na.rm = TRUE),
+    FAM = sum(fairly_active_minutes,  na.rm = TRUE),
+    LAM = sum(lightly_active_minutes, na.rm = TRUE)
+  ) %>%
+  ungroup() %>%
+  mutate(activeMinutes = rowSums(.[c("VAM", "FAM")], na.rm = TRUE))
+
+vibrentAM %>% head() %>% tableStyle()
+```
+
+```{r, echo = FALSE, eval = TRUE}
+vibrentAM %>%
+  select(program_code, VAM, FAM, activeMinutes) %>%
+  reshape2::melt(id.vars = "program_code") %>%
+  mutate(
+    AMtype = factor(variable,
+                    levels = c("VAM", "FAM", "activeMinutes"),
+                    labels = c("Very", "Fairly", "Very+Fairly")),
+    logAM = log(value)
+    ) %>%
+  select(-variable) %>%
+  reshape2::melt(id.vars = c("program_code", "AMtype")) %>%
+  mutate(
+    variable = factor(variable,
+                      levels = c("value", "logAM"),
+                      labels = c("Active Minutes", "ln(Active Minutes)"))
+    ) %>%
+  ggplot() %>%
+  add(facet_wrap(~variable, scales = "free")) %>%
+  add(geom_density(aes(value, 
+                       group = AMtype, 
+                       fill = AMtype), alpha = 0.5)) %>%
+  add(theme(legend.position = c(0.2, 0.8))) %>%
+  add(scale_fill_brewer(palette = "Set2")) %>%
+  add(labs(
+    x = "\nActive Minutes",
+    y = "Density\n",
+    fill = ""
+  ))
+```
+
+In order to determine 6 months and 12 months from baseline/randomization date, surprise! we need the randomization date from the baseline data.
+
+```{r}
+vibrentAM <- baseline %>%
+  select(VibrentID, Randomized_Date) %>%
+  left_join(vibrentAM, by = c("VibrentID" = "program_code")) %>%
+  left_join(arms %>%
+              select(Program_Code, arm), 
+            by = c("VibrentID" = "Program_Code"))
+```
+
+The decision, aside from the 6 (12)-month "week", is to choose the week closest to 182 (365) that **has** active minute data (within a +/- 30 day window). Computationally, that implies removing all "0" active minute weeks first and then running our collection algorithm.
+
+```{r}
+source('functions/MeasureWindows.R')
+
+vib <- windows.f(vibrentAM,
+                 id = "VibrentID",
+                 measures = "activeMinutes",
+                 tmeasures = "meas_week",
+                 startPoint = "Randomized_Date",
+                 t = c(182, 365),
+                 windows = c(30, 30))
+
+vib %>%
+  ggplot() %>%
+  add(geom_density(aes(x = activeMinutes,
+                       group = measureTime,
+                       fill = measureTime),
+                   alpha = 0.3)) %>%
+  add(theme(legend.position = c(0.8, 0.8))) %>%
+  add(scale_fill_brewer(palette = "Set1")) %>%
+  add(labs(
+    x = "Active Minutes = Fairly Active Minutes + Very Active Minutes",
+    y = "Density",
+    fill = "Follow-Up Time"
+  ))
+```
+
+I am interested in knowing the distribution of "timing" around our 30 day window choice, the median should be around 182 and 365 ...  
+
+
+```{r, echo = FALSE, eval = TRUE}
+tbl <- vib %>%
+  mutate(timing = ifelse(measureTime == "t_182", time - 182, time - 365)) %>%
+  group_by(measureTime) %>%
+  summarize(
+    n      = n(),
+    mean   = mean(timing),
+    SD     = sd(timing),
+    min    = min(timing),
+    Q1     = fivenum(timing)[2],
+    median = median(timing),
+    Q3     = fivenum(timing)[4],
+    max    = max(timing)
+  ) %>% 
+  mutate_if(is.numeric, round, digits = 2)
+
+tt <- gridExtra::ttheme_default(colhead = list(fg_params = list(parse = TRUE)))
+tbl <- gridExtra::tableGrob(tbl, rows = NULL, theme = tt)
+
+p <- vib %>%
+  ggplot() %>%
+  add(geom_histogram(aes(x = time,
+                         group = measureTime,
+                         fill = measureTime),
+                     alpha = 0.3,
+                     color = "black",
+                     binwidth = 5)) %>%
+  add(theme(legend.position = "top")) %>%
+  add(scale_fill_brewer(palette = "Set1")) %>%
+  add(labs(
+    x = "Timing within 60-day window",
+    y = "Frequency",
+    fill = "Follow-Up Time"
+  ))
+
+gridExtra::grid.arrange(p, tbl, nrow = 2, as.table = TRUE, heights = c(3, 1))
+```
+
+## Combine Vibrent AM and Survey AM
+
+```{r}
+FOL <- c("Follow-Up Incomplete", "Follow-Up Complete")
+SS  <- c("Outcome Incomplete", "Outcome Complete")
+
+comb <- vib %>%
+  select(-Randomized_Date, -meas_week, -arm) %>%
+  mutate(
+    measureTime = ifelse(measureTime == "t_182", "6 mos.", "12 mos."),
+    activeMinutes = ifelse(activeMinutes == 0, 5, activeMinutes)
+  ) %>%
+  full_join(
+    bind_rows(
+      "6 mos." = sixmoAM,
+      "12 mos." = twelvemoAM,
+      .id = "measureTime"
+    ),
+    by = c("VibrentID", "measureTime")
+  ) %>%
+  select(-c(VAM:LAM), -time) %>%
+  bind_rows(
+    baseline %>%
+      select(-Sex, -Randomized_Date) %>%
+      mutate(measureTime = "Baseline")
+  ) %>%
+  mutate(
+    measureTime = factor(measureTime,
+                         levels = c("Baseline", "6 mos.", "12 mos."),
+                         labels = c("Baseline", "6 mos.", "12 mos."))
+  ) %>%
+  left_join(
+    arms %>%
+      select(Program_Code, arm),
+    by = c("VibrentID" = "Program_Code")
+  ) %>%
+  select(-vig_min_day, -mod_min_day) %>%
+  mutate(
+    FOL_complete = ifelse(!is.na(activeMinutes) | !is.na(vig_mod_min), 1, 0),
+    FOL_complete = ifelse(measureTime == "Baseline", NA, FOL_complete),
+    FOL_complete = factor(FOL_complete, 0:1, FOL),
+    SS_complete  = ifelse(!is.na(activeMinutes), 1, 0),
+    SS_complete  = ifelse(measureTime == "Baseline", NA, SS_complete),
+    SS_complete  = factor(SS_complete, 0:1, SS)
+  )
+```
+
+By Follow-up Completion (Determined by either 6(12)-month survey completion or collection of 6(12)-month active minutes)
+
+```{r}
+comb %>%
+  tabyl(FOL_complete, arm, measureTime) %>%
+  adorn_totals("col") %>%
+  adorn_percentages("all") %>%
+  adorn_pct_formatting(digits = 1) %>%
+  adorn_ns()
+```
+
+By Outcome Completion (Determined by collection of 6(12)-month active minutes)
+
+```{r}
+comb %>%
+  tabyl(SS_complete, arm, measureTime) %>%
+  adorn_totals("col") %>%
+  adorn_percentages("all") %>%
+  adorn_pct_formatting(digits = 1) %>%
+  adorn_ns()
+```
+
+## Steps
+
+```{r}
+steps <- vibrent %>%
+  # remove testing accounts
+  filter(!grepl("[A-Za-z]", program_code)) %>%
+  select(
+    program_code,
+    measurement_date,
+    steps
+  ) %>%
+  mutate(measurement_date = as.Date(measurement_date, "%m-%d-%Y")) %>%
+  mutate(steps = as.numeric(gsub(",", "", steps))) %>%
+  distinct()
+```
+
+```{r}
+dt <- data.table::as.data.table(steps)
+data.table::setkey(dt, program_code, measurement_date)
+dt <- dt[duplicated(dt, by = data.table::key(dt))]
+
+dim(dt)
+```
+
+`r nrow(dt)` duplicate records (`r 2 * nrow(dt)` items to reconcile). We will take the last row for duplicated measurements as the actual values on that day, since they are usually just updated values. For example,
+
+```{r}
+steps <- steps %>%
+  left_join(dt %>%
+              mutate(dup = 1) %>%
+              select(program_code, measurement_date, dup),
+            by = c("program_code", "measurement_date")) %>%
+  mutate(dup = ifelse(is.na(dup), 0, dup)) %>%
+  group_by(program_code, measurement_date) %>%
+  mutate(cnt = row_number()) %>%
+  ungroup() %>%
+  filter((dup == 0 & cnt == 1) | (dup == 1 & cnt == 2)) %>%
+  select(-dup, -cnt)
+
+rm(dt)
+```
+
+Attach "Arm" and Reduce to **only** those at Baseline,
+
+```{r}
+steps <- arms %>%
+  rename(program_code = Program_Code) %>%
+  select(program_code, arm) %>%
+  left_join(steps, by = "program_code")
+```
+
+Need to aggregate steps by week for each person.
+
+```{r}
+steps <- steps %>%
+  mutate(meas_week = lubridate::floor_date(measurement_date, unit = "week")) %>%
+  group_by(program_code, meas_week) %>%
+  summarize(
+    sum_steps = sum(steps, na.rm = TRUE),
+    mean_steps = mean(steps, na.rm = TRUE)
+  ) %>%
+  ungroup()
+
+steps %>% head() %>% tableStyle()
+```
+
+```{r, echo = FALSE, eval = TRUE}
+steps %>%
+  select(program_code, sum_steps, mean_steps) %>%
+  reshape2::melt(id.vars = "program_code") %>%
+  mutate(
+    measure = factor(variable,
+                     levels = c("sum_steps", "mean_steps"),
+                     labels = c("sum(steps)", "mean(steps)")),
+    ) %>%
+  select(-variable) %>%
+  ggplot(aes(value)) %>%
+  add(geom_density(fill = "maroon", size = 1, color = "black", alpha = 0.5)) %>%
+  add(facet_wrap(~measure, scales = "free")) %>%
+  add(theme_trueMinimal(16))
+```
+
+Looks like we've got some zero-inflation
+
+```{r}
+steps %>%
+  mutate(step0 = ifelse(sum_steps == 0, 1, 0)) %>%
+  tabyl(step0) %>%
+  adorn_pct_formatting()
+```
+
+about 10% of the sample is zeroes.
+
+```{r}
+steps <- baseline %>%
+  select(VibrentID, Randomized_Date) %>%
+  left_join(steps, by = c("VibrentID" = "program_code")) %>%
+  left_join(arms %>%
+              select(Program_Code, arm), 
+            by = c("VibrentID" = "Program_Code"))
+```
+
+```{r}
+steps.tp <- windows.f(steps,
+                      id = "VibrentID",
+                      measures = "sum_steps",
+                      tmeasures = "meas_week",
+                      startPoint = "Randomized_Date",
+                      t = c(0, 182, 365),
+                      windows = c(30, 30, 30))
+
+steps.tp %>%
+  ggplot(aes(x = sum_steps, y = measureTime)) %>%
+  add(ggridges::stat_density_ridges(quantile_lines = TRUE)) %>%
+  add(theme_trueMinimal(16)) %>%
+  add(theme(legend.position = c(0.8, 0.8))) %>%
+  add(scale_fill_brewer(palette = "Set1")) %>%
+  add(labs(
+    x = "sum(steps in closest week)",
+    y = "Follow-Up Time"
+  ))
+```
+
+Combine with `comb`/active minute data
+
+```{r}
+comb <- comb %>%
+  left_join(
+    steps.tp %>%
+      select(VibrentID, sum_steps:mean_steps, measureTime) %>%
+      mutate(measureTime = factor(measureTime,
+                                  c("t_0", "t_182", "t_365"),
+                                  c("Baseline", "6 mos.", "12 mos."))),
+    by = c("VibrentID", "measureTime")
+  )
+```
+
+Load in a few more pieces of data;
+
+Baseline Database:
+
+```{r}
+drive   <- "I:/"
+subdir1 <- "StayStrong"
+subdir2 <- "8. Quantitative Analysis"
+subdir3 <- "Programs"
+subdir4 <- "StayStrongDB"
+subdir5 <- "Data"
+file <- "StayStrongDB.rds"
+path <- paste(drive, subdir1, subdir2, subdir3, subdir4, subdir5, file, 
+              sep = "/")
+SSDB <- readRDS(path)
+```
+
+Baseline activity level
+
+```{r}
+subdir4 <- "Outcomes"
+subdir5 <- "Data"
+file <- "BaselineGoal.csv"
+path <- paste(drive, subdir1, subdir2, subdir3, subdir4, subdir5, file,
+              sep = "/")
+
+sqlGoal <- read.csv(path) %>%
+  janitor::clean_names() %>%
+  filter(!is.na(baseline_goal) & !grepl("UAT", i_vibrent_id)) %>%
+  rename(VibrentID = i_vibrent_id)
+```
+
+## More Processing ...
+
+Need to collect sex, operating system and baseline activity level.
+
+```{r}
+SSout <- comb %>%
+  left_join(
+    SSDB$baseline$Demographics %>%
+      select(VibrentID, Sex),
+    by = "VibrentID"
+  ) %>%
+  left_join(
+    SSDB$baseline$Technology_Use %>%
+      select(VibrentID, TypeSphone),
+    by = "VibrentID"
+  ) %>%
+  left_join(sqlGoal, by = "VibrentID")
+```
+
+```{r, echo = FALSE, eval = TRUE}
+rm(p, tt, tbl)
+```
+

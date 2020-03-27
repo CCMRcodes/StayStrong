@@ -1,0 +1,49 @@
+# Intervention Satisfaction
+
+```{r}
+agreed.f <- function(x) {
+  x <- ifelse(x == "Agree" | x == "Strongly agree", 1, 0)
+  x <- factor(x, 0:1, c("< Agree", "At Least Agree"))
+  x
+}
+
+tab <- SSDB$arm %>%
+  select(VibrentID, arm) %>%
+  left_join(
+    SSDB$twelvemo$Technology_Use %>%
+      select(VibrentID, contains("PREC")),
+    by = "VibrentID"
+  ) %>%
+  mutate_at(vars(matches("PREC")), agreed.f) %>%
+  left_join(
+    SSDB$twelvemo$Satisfaction %>%
+      mutate(
+        RecomSS = ifelse(SS_12Recom == "Extremely likely" | SS_12Recom == "Likely",
+                         1, 0),
+        RecomSS = factor(RecomSS, 0:1, c("Would Not Recommend", "Would Recommend"))
+      ) %>%
+      select(VibrentID, RecomSS),
+    by = "VibrentID"
+  ) %>%
+  select(-VibrentID)
+```
+
+```{r}
+ars_cont <- tableby.control(
+  test = FALSE,
+  numeric.stats = c("meansd", "medianq1q3", "Nmiss2"),
+  cat.stats = c("countpct", "Nmiss2"),
+  stats.labels = list(
+    meansd = "Mean (SD)",
+    medianq1q3 = "Median (Q1, Q3)",
+    Nmiss2 = "Missing"
+  )
+)
+
+table_X <- tableby(arm ~ ., data = tab, control = ars_cont)
+summary(table_X, title = "By Arm")
+```
+
+```{r, echo = FALSE, eval = TRUE}
+rm(tab, table_X, ars_cont)
+```

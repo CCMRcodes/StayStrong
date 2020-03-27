@@ -1,0 +1,389 @@
+# ClinicalTrials.gov
+
+Additional packages for this section
+
+```{r}
+library(emmeans)
+library(lme4)
+library(lmerTest)
+```
+
+
+Information required for the Clinical Trials analysis differs considerably from the paper, with four outcomes measured as the *Change* in outcome from baseline to 12-months post baseline. For the purposes of these analyses, the breakdown of the outcomes,
+
+1. Primary Outcome Measures
+    + Change in Physical Activity as Measured with Study-provided Monitoring Device [Time Frame: Change from Baseline in objectively monitored physical activity at one year after randomization]
+2. Secondary Outcome Measures
+    + Change in Weight as Measured with Study-provided scale or From Medical Record (for Missing Values) [Time Frame: Change from Baseline in weight at one year after randomization]
+    + Change in Depression Score as Assessed by the personal Health Questionnaire Depression Scale (PHQ-8) [Time Frame: Change from Baseline Depression score at one year after randomization]
+    + Change in Pain Measures as Assessed by the VA Pain Intensity [Time Frame: Change from Baseline in Pain measures at one year after]
+    
+## Primary Outcomes
+
+### Physical Activity
+
+Physical activity is measured as Active Minutes by a wearable Fitbit Charge 2 device; daily activity is averaged over a one week period for which at least 5 days of valid data are available.
+
+```{r}
+mod1 <- lmer(
+  activeMinutes ~ measureTime * arm + Sex + baseline_goal + TypeSphone + 
+    (1 | VibrentID),
+  data = SSout
+)
+
+anova(mod1)
+```
+
+```{r}
+emmip(mod1, arm ~ measureTime, CIs = TRUE)
+```
+
+```{r}
+em1 <- emmeans(mod1, pairwise ~ measureTime | arm)
+
+em1
+confint(em1)
+```
+
+On clinical trials.gov I would report the contrasts as -67.1 (95% CI: -141.5, 7.35) and -69.0 (95% CI: -148.1, 10.18) for the SS+Coaching and SS interventions, respectively. Again, the **estimated marginal means/least squares means** are derived from a linear mixed model/rmANOVA/rmANCOVA (rm = repeated measures), adjusted for **baseline AM goal**, Type of **Smart Phone**, and **Sex**. Tests, which are not going to be reported on ClinicalTrials.gov for this study, are from a superiority study, where we would have liked to assume that SS+Coaching > SS.
+
+As for the Method of estimation section, it's a little strange but I believe it is asking for the contrasts from an overall test,
+
+```{r}
+cont <- contrast(
+  em1, 
+  "consec", 
+  simple = "each", 
+  combine = TRUE, 
+  adjust = "mvt"
+)
+
+confint(cont$contrasts)
+```
+
+Pretty wide, 1.88 (-119.0, 122.7).
+
+So, in terms of the [ClinicalTrials.gov](https://clinicaltrials.gov/) *Statistical Analysis* Form, under the **Method of Estimation** section, we would state following:
+
+Requested Info             | Data
+-------------------------- | -----------------
+Estimation Parameter       | Slope
+Estimated Value            | 1.88
+Confidence Interval        | 95% 2-sided (LB: -119.0, UB: 122.7)
+Parameter Dispersion Type  | Standard Error of the Mean (SE)
+Parameter Dispersion Value | 46.2
+
+As for the **Estimation Comments** Section:
+
+> Above estimate generated through repeated measures ANCOVA predicting Active Minutes as a function of arm and follow-up time, adjusted for Sex, Baseline Physical Activity Goal (Active Minutes), and type of Smart Phone. Estimate represents the contrast between SS+Coaching, 12 mos. - Baseline vs. SS alone, 12 mos. - Baseline.
+
+How many people in each arm at each time point?
+
+```{r, echo = FALSE, eval = TRUE}
+SSout %>% 
+  select(
+    VibrentID, 
+    arm, 
+    measureTime, 
+    activeMinutes, 
+    baseline_goal, 
+    Sex, 
+    TypeSphone
+  ) %>% 
+  na.omit() %>%
+  group_by(arm, measureTime) %>% 
+  count() %>%
+  tableStyle()
+```
+
+## Secondary Outcomes
+
+### Weight
+
+We used weight from CDW, as data from the provided scales were unreliable.
+
+```{r}
+mod2 <- lmer(
+  Weight ~ measureTime * arm + (1 | VibrentID),
+  data = wtDisc
+)
+
+anova(mod2)
+```
+
+```{r}
+emmip(mod2, arm ~ measureTime, CIs = TRUE)
+```
+
+```{r}
+em2 <- emmeans(mod2, pairwise ~ measureTime | arm)
+
+em2
+confint(em2)
+```
+
+On clinical trials.gov I would report the contrasts as -0.121 (95% CI: -7.25, 7.01) and 4.902 (95% CI: -1.65, 11.45) for the SS+Coaching and SS interventions, respectively. Again, the **estimated marginal means/least squares means** are derived from a linear model/ANOVA/ANCOVA. Tests, which are not going to be reported on ClinicalTrials.gov for this study, are from a superiority study, where we would have liked to assume that SS+Coaching > SS.
+
+As for the Method of estimation section,
+
+```{r}
+cont <- contrast(
+  em2, 
+  "consec", 
+  simple = "each", 
+  combine = TRUE, 
+  adjust = "mvt"
+)
+
+confint(cont$contrasts)
+```
+
+Pretty wide, -5.02 (-15.85, 5.81).
+
+So, in terms of the [ClinicalTrials.gov](https://clinicaltrials.gov/) *Statistical Analysis* Form, under the **Method of Estimation** section, we would state following:
+
+Requested Info             | Data
+-------------------------- | -----------------
+Estimation Parameter       | Slope
+Estimated Value            | -5.02
+Confidence Interval        | 95% 2-sided (LB: -15.85, UB: 5.81)
+Parameter Dispersion Type  | Standard Error of the Mean (SE)
+Parameter Dispersion Value | 56.7
+
+As for the **Estimation Comments** Section:
+
+> Above estimate generated through repeat measures ANCOVA predicting Weight as a function of the interaction of arm and follow-up time. Estimate represents the contrast between SS+Coaching, 12 mos. - Baseline vs. SS alone, 12 mos. - Baseline.
+
+How many people in each arm at each time point?
+
+```{r, echo = FALSE, eval = TRUE}
+wtDisc %>% 
+  select(
+    VibrentID, 
+    arm, 
+    measureTime, 
+    Weight
+  ) %>% 
+  na.omit() %>%
+  group_by(arm, measureTime) %>% 
+  count() %>%
+  tableStyle()
+```
+
+### Depression
+
+```{r}
+depress <- SSDB$arm %>%
+  select(VibrentID, arm) %>%
+  left_join(
+    SSDB$baseline$Survey %>%
+      select(VibrentID, PHQ_score) %>%
+      rename(PHQ_t0 = PHQ_score),
+    by = "VibrentID"
+  ) %>%
+  left_join(
+    SSDB$sixmo$Survey %>%
+      select(VibrentID, PHQ_score) %>%
+      rename(PHQ_t6 = PHQ_score),
+    by = "VibrentID"
+  ) %>%
+  left_join(
+    SSDB$twelvemo$Survey %>%
+      select(VibrentID, PHQ_score) %>%
+      rename(PHQ_t12 = PHQ_score),
+    by = "VibrentID"
+  ) %>%
+  reshape2::melt(id.vars = c("VibrentID", "arm")) %>%
+  rename(
+    measureTime = variable,
+    PHQ_score = value
+  ) %>%
+  mutate(
+    clin_depress = ifelse(PHQ_score >= 10, 1, 0),
+    clin_depress = factor(clin_depress, 0:1, c("PHQ < 10", "PHQ >= 10")),
+    measureTime = gsub("PHQ_", "", measureTime),
+    measureTime = factor(measureTime, 
+                         c("t0", "t6", "t12"),
+                         c("t0", "t6", "t12"))
+  ) %>%
+  na.omit()
+```
+
+We measured depression through the PHQ-8 survey, and for the purposes of the ClinicalTrials.gov analysis, we will model PHQ-8 continuously as opposed to the clinical cutoff/threshold of "10", indicating clinical depression (as measured by this scale).
+
+```{r}
+mod3 <- lmer(
+  PHQ_score ~ measureTime * arm + (1 | VibrentID),
+  data = depress
+)
+
+anova(mod3)
+```
+
+```{r}
+emmip(mod3, arm ~ measureTime, CIs = TRUE)
+```
+
+```{r}
+em3 <- emmeans(mod3, pairwise ~ measureTime | arm)
+
+em3
+confint(em3)
+```
+
+On clinical trials.gov I would report the contrasts as -0.410 (95% CI: -1.510,0.690) and 0.752 (95% CI: -0.442, 1.946) for the SS+Coaching and SS interventions, respectively. Again, the **estimated marginal means/least squares means** are derived from a linear mixed model/rmANOVA/rmANCOVA. Tests, which are not going to be reported on ClinicalTrials.gov for this study, are from a superiority study, where we would have liked to assume that SS+Coaching > SS.
+
+As for the Method of estimation section,
+
+```{r}
+cont <- contrast(
+  em3, 
+  "consec", 
+  simple = "each", 
+  combine = TRUE, 
+  adjust = "mvt"
+)
+
+confint(cont$contrasts)
+```
+
+Pretty narrow when you consider the range of the PHQ-8, -1.162 (-2.969, 0.646).
+
+So, in terms of the [ClinicalTrials.gov](https://clinicaltrials.gov/) *Statistical Analysis* Form, under the **Method of Estimation** section, we would state following:
+
+Requested Info             | Data
+-------------------------- | -----------------
+Estimation Parameter       | Slope
+Estimated Value            | -1.162
+Confidence Interval        | 95% 2-sided (LB: -2.969, UB: 0.646)
+Parameter Dispersion Type  | Standard Error of the Mean (SE)
+Parameter Dispersion Value | 0.690
+
+As for the **Estimation Comments** Section:
+
+> Above estimate generated through ANCOVA predicting PHQ-8 Score as a function of the interaction of arm and follow-up time. Estimate represents the contrast between SS+Coaching, 12 mos. - Baseline vs. SS alone, 12 mos. - Baseline.
+
+How many people in each arm at each time point?
+
+```{r, echo = FALSE, eval = TRUE}
+depress %>% 
+  select(
+    VibrentID, 
+    arm, 
+    measureTime, 
+    PHQ_score
+  ) %>% 
+  na.omit() %>%
+  group_by(arm, measureTime) %>% 
+  count() %>%
+  tableStyle()
+```
+
+### Pain
+
+```{r}
+pain <- SSDB$arm %>%
+  select(VibrentID, arm) %>%
+  left_join(
+    SSDB$baseline$Survey %>%
+      select(VibrentID, PainPastWeek) %>%
+      rename(Pain_t0 = PainPastWeek),
+    by = "VibrentID"
+  ) %>%
+  left_join(
+    SSDB$sixmo$Survey %>%
+      select(VibrentID, PainPastWeek) %>%
+      rename(Pain_t6 = PainPastWeek),
+    by = "VibrentID"
+  ) %>%
+  left_join(
+    SSDB$twelvemo$Survey %>%
+      select(VibrentID, PainPastWeek) %>%
+      rename(Pain_t12 = PainPastWeek),
+    by = "VibrentID"
+  ) %>%
+  reshape2::melt(id.vars = c("VibrentID", "arm")) %>%
+  rename(
+    measureTime = variable,
+    PainPastWeek = value
+  ) %>%
+  mutate(
+    clin_sig_pain = ifelse(PainPastWeek >= 4, 1, 0),
+    clin_sig_pain = factor(clin_sig_pain, 0:1, c("Pain < 4", "Pain >= 4")),
+    measureTime = gsub("Pain_", "", measureTime),
+    measureTime = factor(measureTime, 
+                         c("t0", "t6", "t12"),
+                         c("t0", "t6", "t12"))
+  ) %>%
+  na.omit()
+```
+
+Neuropathic pain is measured on an 11 point scale (0-10), administered via survey at each follow-up time-point. Similar to Depression, we will use the continuous scale for estimation as opposed to the clinical cut-off of "4" indicating clinically significant pain.
+
+```{r}
+mod4 <- lmer(
+  PainPastWeek ~ measureTime * arm + (1 | VibrentID),
+  data = pain
+)
+
+anova(mod4)
+```
+
+```{r}
+emmip(mod4, arm ~ measureTime, CIs = TRUE)
+```
+
+```{r}
+em4 <- emmeans(mod4, pairwise ~ measureTime | arm)
+
+em4
+confint(em4)
+```
+
+On clinical trials.gov I would report the contrasts as 0.212 (95% CI: -0.2145, 0.639) and 0.557 (95% CI: 0.0968, 1.018) for the SS+Coaching and SS alone interventions, respectively. Again, the **estimated marginal means/least squares means** are derived from a linear mixed model/rmANOVA/rmANCOVA. Tests, which are not going to be reported on ClinicalTrials.gov for this study, are from a superiority study, where we would have liked to assume that SS+Coaching > SS.
+
+As for the Method of estimation section,
+
+```{r}
+cont <- contrast(
+  em4, 
+  "consec", 
+  simple = "each", 
+  combine = TRUE, 
+  adjust = "mvt"
+)
+
+confint(cont$contrasts)
+```
+
+Pretty narrow when you consider the range of the 0-10, -0.3454 (-1.044, 0.35359).
+
+So, in terms of the [ClinicalTrials.gov](https://clinicaltrials.gov/) *Statistical Analysis* Form, under the **Method of Estimation** section, we would state following:
+
+Requested Info             | Data
+-------------------------- | ------------------------------------
+Estimation Parameter       | Slope
+Estimated Value            | -0.3454
+Confidence Interval        | 95% 2-sided (LB: -1.044, UB: 0.353)
+Parameter Dispersion Type  | Standard Error of the Mean (SE)
+Parameter Dispersion Value | 0.267
+
+As for the **Estimation Comments** Section:
+
+> Above estimate generated through ANCOVA predicting "Pain In Past Week" as a function of the interaction of arm and follow-up time. Estimate represents the contrast between SS+Coaching, 12 mos. - Baseline vs. SS alone, 12 mos. - Baseline.
+
+How many people in each arm at each time point?
+
+```{r, echo = FALSE, eval = TRUE}
+pain %>%
+  select(
+    VibrentID,
+    arm,
+    measureTime,
+    PainPastWeek
+  ) %>%
+  na.omit() %>%
+  group_by(arm, measureTime) %>%
+  count() %>%
+  tableStyle()
+```

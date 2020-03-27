@@ -1,0 +1,915 @@
+# Secondary Outcomes
+
+## Weight
+
+Set follow-up week by "week from randomization date".
+
+```{r}
+weightCDW <- SSDB$weightCDW %>%
+  filter(Weight != "Refused") %>%
+  mutate(
+    WeightDate = as.Date(WeightDateTime, tz = "UTC", "%Y-%m-%d"),
+    Weight = as.numeric(as.character(Weight))
+  ) %>%
+  #---- deduplicate -----#
+  arrange(VibrentID, WeightDate, WeightDateTime) %>%
+  distinct(VibrentID, WeightDate, Weight) %>%
+  group_by(VibrentID, WeightDate) %>%
+  mutate(Weight = mean(Weight)) %>%
+  ungroup() %>%
+  distinct()
+```
+
+What's that look like for 16 randomly chosen people?
+
+```{r, fig.height = 16, fig.width = 16}
+samp <- sample(unique(weightCDW$VibrentID), 16, replace = FALSE)
+
+weightCDW %>%
+  filter(VibrentID %in% samp) %>%
+  ggplot(aes(x = WeightDate, y = Weight)) %>%
+  add(geom_line(alpha = 0.5)) %>%
+  add(geom_point(color = "black", pch = 21, size = 3)) %>%
+  add(facet_wrap(~VibrentID, nrow = 4)) %>%
+  add(theme_bw(16)) %>%
+  add(theme(legend.position = "top")) %>%
+  add(scale_fill_brewer(palette = "Set1"))
+```
+
+Mostly steady.
+
+Set follow-up day by "day from randomization date".
+
+```{r}
+weightCDW <- SSDB$arm %>%
+  select(VibrentID, arm, Randomized_Date) %>%
+  left_join(weightCDW, by = "VibrentID") %>%
+  filter(WeightDate >= Randomized_Date) %>%
+  arrange(VibrentID, WeightDate) %>%
+  group_by(VibrentID) %>%
+  mutate(
+    tp = row_number(),
+    days = as.numeric(WeightDate - Randomized_Date)
+  ) %>%
+  filter(days <= 365) %>%
+  ungroup()
+```
+
+```{r}
+source('functions/MeasureWindows.R')
+
+wtDisc <- windows.f(weightCDW,
+                    id = "VibrentID",
+                    measures = "Weight",
+                    tmeasures = "WeightDate",
+                    startPoint = "Randomized_Date",
+                    t = c(0, 182, 365),
+                    windows = c(30, 30, 30))
+```
+
+What's that look like for 16 randomly chosen people?
+
+```{r, fig.height = 16, fig.width = 16}
+samp <- sample(unique(wtDisc$VibrentID), 16, replace = FALSE)
+
+wtDisc %>%
+  filter(VibrentID %in% samp) %>%
+  ggplot(aes(x = time, y = Weight)) %>%
+  add(geom_line(alpha = 0.5)) %>%
+  add(geom_point(color = "black", pch = 21, size = 3)) %>%
+  add(facet_wrap(~VibrentID, nrow = 4)) %>%
+  add(theme_bw(16)) %>%
+  add(theme(legend.position = "top")) %>%
+  add(scale_fill_brewer(palette = "Set1"))
+```
+
+Gross. I am going to replace all baseline CDW weights with weights collected at baseline for **everyone**, and for those without a baseline CDW weight, we'll add weights, bringing our denominator to 357, the full sample.
+
+Reduce data to make merging in all people less of a headache,
+
+```{r}
+FolWts <- wtDisc %>%
+  select(VibrentID, arm, Weight, days, measureTime) %>%
+  filter(!(measureTime == "t_0"))
+```
+
+```{r}
+BaseWts <- SSDB$baseline$Eligibility %>%
+  select(VibrentID, Weight_1) %>%
+  rename(Weight = Weight_1) %>%
+  mutate(
+    measureTime = "t_0",
+    days = 0
+  ) %>%
+  right_join(
+    arms %>%
+      select(Program_Code, arm) %>%
+      rename(VibrentID = Program_Code),
+    by = "VibrentID"
+  )
+
+wtDisc <- bind_rows(BaseWts, FolWts) %>% arrange(VibrentID, measureTime)
+```
+
+### ANOVA/ANCOVA
+
+Secondary Outcome Cohort: 2-way ANOVA first, using an intent-to-treat approach (everyone at baseline).
+
+```{r}
+CGPfunctions::Plot2WayANOVA(Weight ~ measureTime * arm,
+                            data = wtDisc,
+                            mean.label = TRUE)
+```
+
+On average, our veterans gained some weight ...
+
+```{r}
+noCOV <- aov(Weight ~ measureTime * arm, data = wtDisc)
+car::Anova(noCOV, type = 2)
+```
+
+We can compute the **estimated marginal means/predicted model means/least squares means** for the model,
+
+```{r}
+emmeans::pmmeans(noCOV, "arm", by = "measureTime")
+```
+
+```{r}
+emmeans::emmip(noCOV, arm ~ measureTime, CIs = TRUE)
+```
+
+We can look at pairwise comparisons as well,
+
+```{r}
+pairs(emmeans::pmmeans(noCOV, "arm", by = "measureTime"))
+```
+
+```{r}
+pairs(emmeans::pmmeans(noCOV, "measureTime", by = "arm"))
+```
+
+### Mixed-Models
+
+```{r}
+y <- "Weight"
+raneff <- "(1 | VibrentID)"
+adj_vars <- c("arm * measureTime")
+f <- as.formula(paste(
+  paste(y,
+        paste(adj_vars, collapse = " + "),
+        sep = " ~ "),
+  raneff,
+  collapse = " + ",
+  sep = " + "
+))
+
+wts.mod.2 <- lmer(f, data = wtDisc)
+
+tab_model(wts.mod.2)
+plot_model(wts.mod.2, show.values = TRUE, value.offset = 0.2)
+```
+
+```{r}
+em1 <- emmeans(wts.mod.2, pairwise ~ measureTime | arm)
+
+confint(em1)
+```
+
+```{r}
+pairs(emmeans::pmmeans(wts.mod.2, "arm", by = "measureTime"))
+```
+
+```{r}
+plot_model(wts.mod.2, type = "pred", terms = c("measureTime", "arm"))
+```
+
+#### Full Time-Series
+
+Still need to replace the baseline weight with the self-reported weight,
+
+```{r, fig.height = 5, fig.width = 5}
+wt.df <- weightCDW %>%
+  filter(!(tp == 1)) %>%
+  select(VibrentID, arm, days, Weight) %>%
+  bind_rows(BaseWts %>% select(-measureTime))
+
+wt.df %>%
+  ggplot(aes(x = days, y = Weight)) %>% 
+  add(geom_line(aes(group = VibrentID), alpha = 0.2)) %>% 
+  add(stat_smooth(
+    data = wt.df, 
+    aes(x = days, y = Weight, group = arm, color = arm), 
+    method = "lm", 
+    se = FALSE,
+    inherit.aes = FALSE,
+    size = 1
+  )) %>%
+  add(theme_trueMinimal(16)) %>%
+  add(theme(legend.position = "bottom")) %>%
+  add(scale_color_brewer(palette = "Set1"))
+```
+
+```{r, echo = FALSE, eval = FALSE}
+library(brms)
+library(rstan)
+library(Rcpp)
+
+y <- "Weight"
+raneff <- "(1 + days | VibrentID)"
+adj_vars <- c("arm * days")
+f <- brms::bf(paste(
+  paste(y,
+        paste(adj_vars, collapse = " + "),
+        sep = " ~ "),
+  raneff,
+  collapse = " + ",
+  sep = " + "
+))
+
+priors <- c(
+  set_prior('student_t(3, 212, 49)', class = "Intercept"),
+  set_prior('normal(2, 10)',         coef = "armINTERVENTION"),
+  set_prior('normal(0, 5)',          coef = "days"),
+  set_prior('normal(0, 5)',          coef = "armINTERVENTION:days")
+  # set_prior(
+  #   'cauchy(0, 2)', 
+  #   class = "sd", 
+  #   coef  = "Intercept", 
+  #   group = "VibrentID"
+  # ),
+  # set_prior(
+  #   'cauchy(0, 2)',
+  #   class = "sd",
+  #   coef  = "days",
+  #   group = "VibrentID"
+  # )
+)
+
+wts.mod.1 <- brm(
+  f,
+  data = wt.df,
+  chains = 3,
+  iter = 10000,
+  cores = 3,
+  warmup = 2000,
+  prior = priors,
+  sample_prior = 'yes'
+)
+
+tab_model(wts.mod.1)
+plot_model(wts.mod.1, show.values = TRUE, value.offset = 0.2)
+```
+
+```{r, echo = FALSE, eval = FALSE}
+saveRDS(wts.mod.1, "models/brmsfit_weight_ts.rds")
+```
+
+```{r, echo = FALSE, eval = FALSE}
+wts.mod.1 <- readRDS("models/brmsfit_weight_ts.rds")
+
+tab_model(wts.mod.1)
+plot_model(wts.mod.1, show.values = TRUE, value.offset = 0.2)
+```
+
+```{r, echo = FALSE, eval = FALSE}
+plot_model(
+  wts.mod.1, 
+  type = "pred",
+  terms = c("days", "arm")
+) %>%
+  add(theme(legend.position = "bottom"))
+```
+
+I'm going to scale the time covariate, to allow for a natural comparison with the intervention indicator.
+
+```{r}
+wt.df2 <- wt.df %>% mutate(days = scale2(days))
+```
+
+
+```{r, echo = FALSE, eval = FALSE}
+wts.mod.2 <- brm(
+  f, 
+  data = wt.df2,
+  chains = 3,
+  iter = 30000,
+  cores = 3,
+  warmup = 3000,
+  thin = 3,
+  prior = priors,
+  sample_prior = 'yes'
+)
+
+tab_model(wts.mod.2)
+plot_model(wts.mod.2, show.values = TRUE, value.offset = 0.2)
+```
+
+```{r, echo = FALSE, eval = FALSE}
+saveRDS(wts.mod.2, "models/brmsfit_weight_ts_scaled.rds")
+```
+
+```{r, echo = FALSE, eval = FALSE}
+wts.mod.2 <- readRDS("models/brmsfit_weight_ts_scaled.rds")
+
+tab_model(wts.mod.2)
+plot_model(wts.mod.2, show.values = TRUE, value.offset = 0.2)
+```
+
+```{r, echo = FALSE, eval = FALSE}
+plot_model(
+  wts.mod.2, 
+  type = "pred",
+  terms = c("days", "arm")
+) %>%
+  add(theme(legend.position = "bottom"))
+```
+
+```{r}
+y <- "Weight"
+raneff <- "(1 + days | VibrentID)"
+adj_vars <- c("arm * days")
+f <- brms::bf(paste(
+  paste(y,
+        paste(adj_vars, collapse = " + "),
+        sep = " ~ "),
+  raneff,
+  collapse = " + ",
+  sep = " + "
+))
+
+wts.mod.2 <- lmer(f, data = wt.df2, control = control)
+
+tab_model(wts.mod.2)
+plot_model(wts.mod.2, show.values = TRUE, value.offset = 0.2)
+```
+
+```{r}
+plot_model(
+  wts.mod.2, 
+  type = "pred",
+  terms = c("days", "arm")
+) %>%
+  add(theme(legend.position = "bottom"))
+```
+
+```{r}
+emm <- emmeans(
+  wts.mod.2,
+  ~ arm | days,
+  at = list(days = c(-0.517, 0.174, 0.870))
+)
+
+contrast(emm, method = "pairwise")
+```
+
+## Patient Activation
+
+This is survey data only available at baseline, 6-month, and 12-month follow-up time. Technically we employed the short form of the **PAM**^[Hibbard JH, Mahoney ER, Stockard J, Tusler M. Development and testing of a short form of the patient activation measure. Health services research. 2005 Dec;40(6p1):1918-30.] survey (PAM-13), the details of which can be found [here](I:\StayStrong\8. Quantitative Analysis\Programs\Baseline\2_survey_preparation\PAM 13 license package 073008.pdf).
+
+<font size="4">Instructions for scoring the PAM-13:</font>
+
+First, calculate a raw score: add up all of the responses to the 13 questions. For each "Strongly Disagree" response give the person a 1, for each "Disagree" response give the person a 2, for each "Agree" response give the person a 3, for each "Strongly Agree" response give the person a 4.
+
+If there are no items with "not applicable" responses, use the total as the raw score.
+If there are items with a response of "not applicable" or a question left blank, these items are scored as "missing." In this case divide the point total by the number of items completed with a 1-4 response (exclude the missing) and multiply by 13 to get the raw score. For example, if two questions were answered with a "not applicable" response, your denominator would be 11.
+
+Second, convert the raw score into the activation score. If necessary, round off your raw score to the nearest whole number. Then, using the table below, simply find the raw score in the column marked "Raw Score," then read across to find the person's activation score.
+
+Finally, we recommend that if any respondents who answer all 13 questions with a "strongly agree" response, that you not include their score. They are likely not responding in a truthful or accurate way. The same is true for respondents who answer all 13 items with a "strongly disagree" response.
+
+<font size="4">The activation scores can be categorized into activation level segments as follows</font>,
+
+* STAGE 1: May not yet believe that the patient role is important (Having a PAM score of 47.0 or lower, 11.8%)
+* STAGE 2: Lacks confidence and knowledge to take action (Having a PAM score of 47.1 to 55.1, 29.3%)
+* STAGE 3: Beginning to take action (Having a PAM score of 55.2 to 67.0, 36.5%)
+* STAGE 4: Has difficulty maintaining behaviors over time (Having a PAM score of 67.1 or above, 22.3%)
+
+<font size="4">Survey Prompt and 13 questions:</font>
+
+1. When all is said and done, I am the person who is responsible for taking care of my health
+2. Taking an active role in my own health care is the most important thing that affects my health
+3. I am confident I can help prevent or reduce problems associated with my health
+4. I know what each of my prescribed medications do
+5. I am confident that I can tell whether I need to go to the doctor or whether I can take care of a health problem myself.
+6. I am confident that I can tell a doctor concerns I have even when he or she does not ask.
+7. I am confident that I can follow through on medical treatments I may need to do at home
+8. I understand my health problems and what causes them.
+9. I know what treatments are available for my health problems
+10. I have been able to maintain (keep up with) lifestyle changes, like eating right or exercising
+11. I know how to prevent problems with my health
+12. I am confident I can figure out solutions when new problems arise with my health.
+13. I am confident that I can maintain lifestyle changes, like eating right and exercising, even during times of stress.
+
+```{r}
+pam <- SSDB$arm %>%
+  select(VibrentID, arm) %>%
+  left_join(
+    SSDB$baseline$Survey %>%
+      select(VibrentID, PAM_PAM_1:PAM_PAM_13),
+    by = "VibrentID"
+  ) %>%
+  select(-VibrentID, -arm)
+
+sjt.itemanalysis(pam)
+```
+
+From the `sjt.itemanalysis()` [github](https://strengejacke.github.io/sjPlot/articles/sjtitemanalysis.html)
+
+To interprete the output, we may consider following values as rule-of-thumbs for indicating a reliable scale:
+
+* item difficulty should range between 0.2 and 0.8. Ideal value is p+(1-p)/2 (which mostly is between 0.5 and 0.8)
+* for item discrimination, acceptable values are 0.2 or higher; the closer to 1 the better
+* in case the total Cronbach’s Alpha value is below the acceptable cut-off of 0.7 (mostly if an index has few items), the mean inter-item-correlation is an alternative measure to indicate acceptability; satisfactory range lies between 0.2 and 0.4
+
+If we take these interpetration guidelines to heart, then the *PAM-13* is a problematic survey scale.
+
+That was at baseline, we can look at 6-month ...
+
+```{r, echo = FALSE, eval = TRUE}
+pam <- SSDB$arm %>%
+  select(VibrentID, arm) %>%
+  left_join(
+    SSDB$sixmo$Survey %>%
+      select(VibrentID, PAM_1:PAM_13),
+    by = "VibrentID"
+  ) %>%
+  select(-VibrentID, -arm)
+
+sjt.itemanalysis(pam)
+```
+
+and at 12-months
+
+```{r, echo = FALSE, eval = TRUE}
+pam <- SSDB$arm %>%
+  select(VibrentID, arm) %>%
+  left_join(
+    SSDB$twelvemo$Survey %>%
+      select(VibrentID, PAM_1:PAM_13),
+    by = "VibrentID"
+  ) %>%
+  select(-VibrentID, -arm)
+
+sjt.itemanalysis(pam)
+```
+
+Moving forward we will be looking at a continuous measure of the PAM-13, the final activation score `PAM_score`
+
+```{r}
+pam <- SSDB$arm %>%
+  select(VibrentID, arm) %>%
+  left_join(
+    SSDB$baseline$Survey %>%
+      select(VibrentID, PAM_score) %>%
+      rename(PAM_t0 = PAM_score),
+    by = "VibrentID"
+  ) %>%
+  left_join(
+    SSDB$sixmo$Survey %>%
+      select(VibrentID, PAM_score) %>%
+      rename(PAM_t6 = PAM_score),
+    by = "VibrentID"
+  ) %>%
+  left_join(
+    SSDB$twelvemo$Survey %>%
+      select(VibrentID, PAM_score) %>%
+      rename(PAM_t12 = PAM_score),
+    by = "VibrentID"
+  ) %>%
+  reshape2::melt(id.vars = c("VibrentID", "arm")) %>%
+  rename(
+    measureTime = variable,
+    PAM_score = value
+  ) %>%
+  mutate(
+    measureTime = gsub("PAM_", "", measureTime),
+    measureTime = factor(measureTime, 
+                         c("t0", "t6", "t12"),
+                         c("t0", "t6", "t12"))
+  ) %>%
+  left_join(sqlGoal, by = "VibrentID") %>%
+  left_join(
+    SSDB$baseline$Demographics %>%
+      select(VibrentID, Sex),
+    by = "VibrentID"
+  ) %>%
+  left_join(
+    SSDB$baseline$Technology_Use %>%
+      select(VibrentID, TypeSphone),
+    by = "VibrentID"
+  ) %>%
+  na.omit()
+```
+
+### ANOVA/ANCOVA
+
+Secondary Outcome Cohort: 2-way ANOVA first, using an intent-to-treat approach (everyone at baseline).
+
+```{r}
+CGPfunctions::Plot2WayANOVA(PAM_score ~ measureTime * arm,
+                            data = pam,
+                            mean.label = TRUE)
+```
+
+About a 2 to 4 point dip between baseline and 6-months, likely not significant on a scale that ranges from 0-100, the five-number summary of our data is `r fivenum(pam$PAM_score)`
+
+```{r}
+noCOV <- aov(PAM_score ~ measureTime * arm, data = pam)
+car::Anova(noCOV, type = 2)
+```
+
+We can compute the **estimated marginal means/predicted model means/least squares means** for the model,
+
+```{r}
+emmeans::pmmeans(noCOV, "arm", by = "measureTime")
+```
+
+```{r}
+emmeans::emmip(noCOV, arm ~ measureTime, CIs = TRUE)
+```
+
+We can look at pairwise comparisons as well,
+
+```{r}
+pairs(emmeans::pmmeans(noCOV, "measureTime", by = "arm"))
+```
+
+No differences there.
+
+### Mixed-Models
+
+```{r}
+mMod <- lmer(PAM_score ~ arm * measureTime + (1 | VibrentID), 
+             data = pam)
+
+tab_model(mMod)
+plot_model(mMod, show.values = TRUE, value.offset = 0.3)
+```
+
+```{r, fig.width = 6, fig.height = 8}
+plot_model(mMod, type = "pred", terms = c("measureTime", "arm")) %>%
+  add(theme(legend.position = "bottom")) %>%
+  add(ggforce::facet_zoom(xlim = c(1, 3), ylim = c(0, 100), 
+                          horizontal = FALSE)) %>%
+  add(labs(
+    x = "Follow-Up Time",
+    y = "PAM-13 Score",
+    color = "",
+    title = "Predicted PAM-13 Score (range: 18.9-91.6)"
+  ))
+```
+
+```{r}
+plot_model(
+  mMod, 
+  type = "pred", 
+  terms = c("arm", "measureTime"),
+  mdrt.values = "meansd"
+) %>%
+  add(theme(legend.position = "bottom")) %>%
+  add(labs(
+    x = "",
+    y = "PAM-13 Score",
+    color = "Follow-Up Time",
+    title = "Predicted PAM-13 Score (range: 18.9-91.6)"
+  ))
+```
+
+```{r}
+em1 <- emmeans(mMod, pairwise ~ measureTime | arm)
+
+confint(em1)
+```
+
+```{r}
+pairs(emmeans::pmmeans(mMod, "arm", by = "measureTime"))
+```
+
+Assess Fit
+
+```{r}
+plot(mMod)
+plot(mMod, sqrt(abs(residuals(.))) ~ fitted(.), type = c("p", "smooth"))
+lattice::qqmath(mMod)
+```
+
+Pretty good to be honest with ya.
+
+Those were the fixed effects, now the random effects (our veterans),
+
+```{r, fig.height = 30, fig.width = 15}
+broom::tidy(mMod, effects = "ran_vals") %>%
+  ggplot(aes(reorder(level, estimate), estimate)) %>%
+  add(geom_pointrange(
+    aes(ymin = estimate - 1.96 * std.error, ymax = estimate + 1.96 * std.error)
+  )) %>%
+  add(geom_hline(
+    yintercept = 0, 
+    color = "#7d0e40", 
+    linetype = "dashed",
+    size = 2
+  )) %>%
+  add(coord_flip()) %>%
+  add(labs(x = "", y = "Intercept")) %>%
+  add(theme_trueMinimal(16)) %>%
+  add(theme(axis.text.y = element_blank()))
+```
+
+Predictions and Plotting,
+
+
+```{r, fig.width = 10, fig.height = 6}
+mod.frame <- mMod@frame
+mod.frame$pred.pop <- predict(mMod, re.form = NA)
+mod.frame$pred.ind <- predict(mMod)
+
+mod.frame %>%
+  ggplot(aes(measureTime, PAM_score)) %>%
+  add(facet_grid(~arm)) %>%
+  add(geom_point(alpha = 0.2)) %>%
+  add(geom_line(aes(group = VibrentID), alpha = 0.2)) %>%
+  add(geom_line(aes(y = pred.ind, group = VibrentID), color = "#7d0e40")) %>%
+  add(labs(
+    x = "Follow-Up Time",
+    y = "PAM-13 Score"
+  ))
+```
+
+## Pain
+
+```{r}
+pain <- SSDB$arm %>%
+  select(VibrentID, arm) %>%
+  left_join(
+    SSDB$baseline$Survey %>%
+      select(VibrentID, PainPastWeek) %>%
+      rename(Pain_t0 = PainPastWeek),
+    by = "VibrentID"
+  ) %>%
+  left_join(
+    SSDB$sixmo$Survey %>%
+      select(VibrentID, PainPastWeek) %>%
+      rename(Pain_t6 = PainPastWeek),
+    by = "VibrentID"
+  ) %>%
+  left_join(
+    SSDB$twelvemo$Survey %>%
+      select(VibrentID, PainPastWeek) %>%
+      rename(Pain_t12 = PainPastWeek),
+    by = "VibrentID"
+  ) %>%
+  reshape2::melt(id.vars = c("VibrentID", "arm")) %>%
+  rename(
+    measureTime = variable,
+    Pain_score = value
+  ) %>%
+  mutate(
+    measureTime = gsub("Pain_", "", measureTime),
+    measureTime = factor(measureTime, 
+                         c("t0", "t6", "t12"),
+                         c("t0", "t6", "t12"))
+  ) %>%
+  left_join(
+    SSDB$baseline$Demographics %>%
+      select(VibrentID, Sex),
+    by = "VibrentID"
+  ) %>%
+  na.omit()
+```
+
+### Mixed-Models
+
+```{r}
+pMod <- lmer(Pain_score ~ arm * measureTime + (1 | VibrentID),
+             data = pain)
+
+tab_model(pMod)
+plot_model(pMod, show.values = TRUE, value.offset = 0.3)
+```
+
+```{r, fig.width = 6, fig.height = 8}
+plot_model(pMod, type = "pred", terms = c("measureTime", "arm")) %>%
+  add(theme(legend.position = "bottom")) %>%
+  add(ggforce::facet_zoom(xlim = c(1, 3), ylim = c(0, 10),
+                          horizontal = FALSE)) %>%
+  add(labs(
+    x = "Follow-Up Time",
+    y = "Pain in Past Week Score",
+    color = "",
+    title = "Predicted Pain Score (range: 0-10)"
+  ))
+```
+
+```{r}
+plot_model(
+  pMod, 
+  type = "pred", 
+  terms = c("arm", "measureTime"),
+  mdrt.values = "meansd"
+) %>%
+  add(theme(legend.position = "bottom")) %>%
+  add(labs(
+    x = "",
+    y = "Pain in Past Week Score",
+    color = "Follow-Up Time",
+    title = "Predicted Pain Score (range: 0-10)"
+  ))
+```
+
+```{r}
+em1 <- emmeans(pMod, pairwise ~ measureTime | arm)
+
+confint(em1)
+```
+
+```{r}
+pairs(emmeans::pmmeans(pMod, "arm", by = "measureTime"))
+```
+
+Assess Fit
+
+```{r}
+plot(pMod)
+plot(pMod, sqrt(abs(residuals(.))) ~ fitted(.), type = c("p", "smooth"))
+lattice::qqmath(pMod)
+```
+
+Heavy tails ... 
+
+Those were the fixed effects, now the random effects (our veterans),
+
+```{r, fig.height = 30, fig.width = 15}
+broom::tidy(pMod, effects = "ran_vals") %>%
+  ggplot(aes(reorder(level, estimate), estimate)) %>%
+  add(geom_pointrange(
+    aes(ymin = estimate - 1.96 * std.error, ymax = estimate + 1.96 * std.error)
+  )) %>%
+  add(geom_hline(
+    yintercept = 0, 
+    color = "#7d0e40", 
+    linetype = "dashed",
+    size = 2
+  )) %>%
+  add(coord_flip()) %>%
+  add(labs(x = "", y = "Intercept")) %>%
+  add(theme_trueMinimal(16)) %>%
+  add(theme(axis.text.y = element_blank()))
+```
+
+Predictions and Plotting,
+
+```{r, fig.width = 10, fig.height = 6}
+mod.frame <- pMod@frame
+mod.frame$pred.pop <- predict(pMod, re.form = NA)
+mod.frame$pred.ind <- predict(pMod)
+
+mod.frame %>%
+  ggplot(aes(measureTime, Pain_score)) %>%
+  add(facet_grid(~arm)) %>%
+  add(geom_point(alpha = 0.2)) %>%
+  add(geom_line(aes(group = VibrentID), alpha = 0.2)) %>%
+  add(geom_line(aes(y = pred.ind, group = VibrentID), color = "#7d0e40")) %>%
+  add(labs(
+    x = "Follow-Up Time",
+    y = "Pain Score"
+  ))
+```
+
+## Depression (PHQ-8)
+
+```{r}
+phq8 <- SSDB$arm %>%
+  select(VibrentID, arm) %>%
+  left_join(
+    SSDB$baseline$Survey %>%
+      select(VibrentID, PHQ_score) %>%
+      rename(PHQ_t0 = PHQ_score),
+    by = "VibrentID"
+  ) %>%
+  left_join(
+    SSDB$sixmo$Survey %>%
+      select(VibrentID, PHQ_score) %>%
+      rename(PHQ_t6 = PHQ_score),
+    by = "VibrentID"
+  ) %>%
+  left_join(
+    SSDB$twelvemo$Survey %>%
+      select(VibrentID, PHQ_score) %>%
+      rename(PHQ_t12 = PHQ_score),
+    by = "VibrentID"
+  ) %>%
+  reshape2::melt(id.vars = c("VibrentID", "arm")) %>%
+  rename(
+    measureTime = variable,
+    PHQ_score = value
+  ) %>%
+  mutate(
+    measureTime = gsub("PHQ_", "", measureTime),
+    measureTime = factor(measureTime, 
+                         c("t0", "t6", "t12"),
+                         c("t0", "t6", "t12"))
+  ) %>%
+  left_join(
+    SSDB$baseline$Demographics %>%
+      select(VibrentID, Sex),
+    by = "VibrentID"
+  ) %>%
+  na.omit()
+```
+
+### Mixed-Models
+
+```{r}
+dMod <- lmer(PHQ_score ~ arm * measureTime + (1 | VibrentID),
+             data = phq8)
+
+tab_model(dMod)
+plot_model(dMod, show.values = TRUE, value.offset = 0.3)
+```
+
+```{r, fig.width = 6, fig.height = 8}
+plot_model(dMod, type = "pred", terms = c("measureTime", "arm")) %>%
+  add(theme_sjplot(16)) %>%
+  add(theme(legend.position = "bottom")) %>%
+  add(ggforce::facet_zoom(xlim = c(1, 3), ylim = c(0, 24),
+                          horizontal = FALSE)) %>%
+  add(labs(
+    x = "Follow-Up Time",
+    y = "PHQ-8 Score",
+    color = "",
+    title = "Predicted PHQ-8 (range: 0-24)"
+  ))
+```
+
+```{r}
+plot_model(
+  dMod, 
+  type = "pred", 
+  terms = c("arm", "measureTime"),
+  mdrt.values = "meansd"
+) %>%
+  add(theme(legend.position = "bottom")) %>%
+  add(labs(
+    x = "",
+    y = "PHQ-8 Score",
+    color = "Follow-Up Time",
+    title = "Predicted PHQ-8 Score (range: 0-24)"
+  ))
+```
+
+```{r}
+em1 <- emmeans(dMod, pairwise ~ measureTime | arm)
+
+confint(em1)
+```
+
+```{r}
+pairs(emmeans::pmmeans(dMod, "arm", by = "measureTime"))
+```
+
+Assess Fit
+
+```{r}
+plot(dMod)
+plot(dMod, sqrt(abs(residuals(.))) ~ fitted(.), type = c("p", "smooth"))
+lattice::qqmath(dMod)
+```
+
+Those were the fixed effects, now the random effects (our veterans),
+
+```{r, fig.height = 30, fig.width = 15}
+broom::tidy(dMod, effects = "ran_vals") %>%
+  ggplot(aes(reorder(level, estimate), estimate)) %>%
+  add(geom_pointrange(
+    aes(ymin = estimate - 1.96 * std.error, ymax = estimate + 1.96 * std.error)
+  )) %>%
+  add(geom_hline(
+    yintercept = 0, 
+    color = "#7d0e40", 
+    linetype = "dashed",
+    size = 2
+  )) %>%
+  add(coord_flip()) %>%
+  add(labs(x = "", y = "Intercept")) %>%
+  add(theme_trueMinimal(16)) %>%
+  add(theme(axis.text.y = element_blank()))
+```
+
+Predictions and Plotting,
+
+```{r, fig.width = 10, fig.height = 6}
+mod.frame <- dMod@frame
+mod.frame$pred.pop <- predict(dMod, re.form = NA)
+mod.frame$pred.ind <- predict(dMod)
+
+mod.frame %>%
+  ggplot(aes(measureTime, PHQ_score)) %>%
+  add(facet_grid(~arm)) %>%
+  add(geom_point(alpha = 0.2)) %>%
+  add(geom_line(aes(group = VibrentID), alpha = 0.2)) %>%
+  add(geom_line(aes(y = pred.ind, group = VibrentID), color = "#7d0e40")) %>%
+  add(labs(
+    x = "Follow-Up Time",
+    y = "PHQ-8 Score"
+  ))
+```

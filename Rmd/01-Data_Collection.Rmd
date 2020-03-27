@@ -1,0 +1,133 @@
+# Data Collection
+
+```{r, eval = TRUE, echo = FALSE}
+suppressWarnings(library(knitr))
+
+options(max.print = "200")
+opts_chunk$set(echo = TRUE,
+	             cache = FALSE,
+               prompt = FALSE,
+               tidy = FALSE,
+               comment = NA,
+               message = FALSE,
+               warning = FALSE)
+opts_knit$set(width = 80)
+
+tableStyle <- function(t,
+                       boot_opt = c("striped", "hover", "condensed"), 
+                       full_width = TRUE) {
+  
+  t %>%
+    knitr::kable() %>%
+    kableExtra::kable_styling(
+      bootstrap_options = boot_opt,
+      full_width = full_width
+    )
+}
+```
+
+For the Fitbit Collected active minutes we will make use of the **Log Entry Report** collected from [Vibrent](https://staystrong.vibrenthealth.com/#/). There are several issues to be aware of when it comes to parsing these "Objective Data". First, we have yet to combine information from **Fitbit** and **Vibrent**, where they do sometimes differ in their recording of active minute data. To get a sense of the extent of this issue see the [DifferPlots](I:\StayStrong\5. Identifiable Data (sensitive data)\Fitbit Exports\DifferPlots.pdf) document. More impactful to the results is the issue of how to then define what a Stay Strong subjects "12-month active minutes" is composed of. Any choice represents a degree of freedom on our part that will impact the shape of the measure we wish to analyze. This is one of those situations where a sensitivity analysis is warranted to examine how "robust" are choice of measure is. Myra suggested we choose the closest week to 12-months post baseline that has active minute data. I feel we should establish a range or window of about 1-month pre- and post- $t_0 + 182.5$ ($t_0 + 152.5 \leq t_6 \leq t_0 + 212.5$), so that we can find the appropriate week.
+
+Packages in this section
+
+```{r}
+library(tidyverse) # data management tools + ggplot
+library(magrittr)  # additional pipe operators: add(), and %<>%
+library(readxl)    # read excel docs
+```
+
+## Baseline
+
+We can build off of past work and start with the "cleaned" baseline database from the **Sex** Analysis project.
+
+```{r}
+drive <- "I:/StayStrong"
+subdir1 <- "8. Quantitative Analysis"
+subdir2 <- "Programs"
+subdir3 <- "Baseline"
+subdir4 <- "3b_analysis_table_one_bysex"
+file <- "StayStrongBaselineBySex.rds"
+path <- paste(drive, subdir1, subdir2, subdir3, subdir4, file, sep = "/")
+
+baseline <- readRDS(path)
+```
+
+## Study-Arm
+
+```{r}
+arms <- readRDS("I:/StayStrong/8. Quantitative Analysis/Programs/ArmAndCrosswalk.rds")
+
+dim(arms)
+```
+
+## 6-Month
+
+We will have to join baseline with 6-month data, after first preparing 6-month data in the same way as baseline data, with regards to active minutes. Baseline active minutes were cleaned using data from the **Goals** portion of the Vibrent data, this approach will not work for subsequent Fitbit data, and will have to use the data in the **Fitbit** sheet.
+
+### Qualtrics Survey
+
+```{r}
+subdir3 <- "6 Month"
+subdir4 <- "2_survey_preparation"
+file <- "6MonthDB.rds"
+path <- paste(drive, subdir1, subdir2, subdir3, subdir4, file, sep = "/")
+sixmo <- readRDS(path)
+```
+
+Tables in 6-Month database:
+
+```{r}
+data.frame(tables = names(sixmo)) %>% tableStyle()
+```
+
+## 12-Month
+
+### Qualtrics Survey
+
+```{r}
+subdir3 <- "12 Month"
+subdir4 <- "2_survey_preparation"
+file <- "12MonthDB.rds"
+path <- paste(drive, subdir1, subdir2, subdir3, subdir4, file, sep = "/")
+twelvemo <- readRDS(path)
+```
+
+Tables in 12-Month database:
+
+```{r}
+data.frame(tables = names(twelvemo)) %>% tableStyle()
+```
+
+## Vibrent Data
+
+```{r}
+subdir1 <- "6. Limited Data (sensitive data)"
+subdir2 <- "Vibrent Exports"
+subdir3 <- "Log Entry Reports"
+
+# Data are stored in archives
+# Archive 1
+file <- "Log_Entry_Report_ARCHIVE_1.xlsx"
+path <- paste(drive, subdir1, subdir2, subdir3, file, sep = "/")
+
+vibrent1 <- readxl::read_xlsx(path, sheet = "Fitbit")
+
+# Archive 2
+file <- "Log_Entry_Report_ARCHIVE_2.xlsx"
+path <- paste(drive, subdir1, subdir2, subdir3, file, sep = "/")
+
+vibrent2 <- readxl::read_xlsx(path, sheet = "Fitbit")
+
+# Archive 3
+file <- "Log_Entry_Report_ARCHIVE_3.xlsx"
+path <- paste(drive, subdir1, subdir2, subdir3, file, sep = "/")
+
+vibrent3 <- readxl::read_xlsx(path, sheet = "Fitbit")
+
+vibrent <- rbind(vibrent1, vibrent2, vibrent3) %>% distinct()
+dim(vibrent)
+```
+
+```{r, echo = FALSE, eval = TRUE}
+rm(vibrent1, vibrent2, vibrent3)
+```

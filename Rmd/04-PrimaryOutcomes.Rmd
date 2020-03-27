@@ -1,0 +1,1593 @@
+# Primary Outcomes
+
+```{r}
+library(sjstats)      # modelling tools, plots, diagnoses, etc.
+library(sjPlot)       # More SJ Modelling plots
+library(broom)        # more modelling tools
+library(CGPfunctions) # All-In-One ANOVA function
+library(ggstatsplot)  # Useful plotting package
+library(lme4)         # For Mixed/Longitudinal Modelling
+library(lmerTest)     # Extra functionality for lme4
+library(emmeans)      # Estimated Marginal Means/Least Squares Means
+```
+
+## Active Minutes
+
+Vibrent Collected Active Minutes
+
+```{r}
+psych::describeBy(SSout$activeMinutes, SSout$measureTime)
+```
+
+Subjectively measured active minutes
+
+```{r}
+psych::describeBy(SSout$vig_mod_min, SSout$measureTime)
+```
+
+Overall differences in vibrent active minutes, by arm,
+
+```{r, fig.height = 8, fig.width = 10}
+ggbetweenstats(
+  data = SSout,
+  x = arm, 
+  y = activeMinutes,
+  type = "nonparametric",
+  notch = TRUE,
+  mean.plotting = TRUE,
+  mean.ci = TRUE,
+  k = 2,
+  palette = "default_jama",
+  package = "ggsci",
+  xlab = "Arm",
+  ylab = "Vibrent Active Minutes"
+)
+```
+
+Overall differences in vibrent active minutes, by arm and measureTime. Multiple Comparisons adjustment via [Benjamini-Hochberg](https://en.wikipedia.org/wiki/False_discovery_rate#Benjamini%E2%80%93Hochberg_procedure) method
+
+```{r, fig.height = 8, fig.width = 16}
+grouped_ggbetweenstats(
+  data = SSout,
+  x = arm,
+  y = activeMinutes,
+  type = "nonparametric",
+  notch = TRUE,
+  grouping.var = measureTime,
+  pairwise.comparisons = TRUE,
+  pairwise.annotation = "p.value",
+  p.adjust.method = "BH",
+  conf.level = 0.99,
+  k = 2,
+  palette = "default_jama",
+  package = "ggsci",
+  nrow = 1,
+  xlab = "Arm",
+  ylab = "Vibrent Active Minutes"
+)
+```
+
+Repeated measures
+
+```{r, fig.height = 8, fig.width = 16}
+grouped_ggwithinstats(
+  data = SSout,
+  x = measureTime,
+  y = activeMinutes,
+  grouping.var = arm,
+  type = "nonparametric",
+  notch = TRUE,
+  xlab = "Follow-Up Time",
+  ylab = "Vibrent Active Minutes"
+)
+```
+
+'Spaghetti' Plots
+
+```{r, warning = FALSE, message = FALSE, fig.width = 10, fig.height = 6}
+SSout %>%
+  ggplot(aes(x = measureTime, y = activeMinutes, group = VibrentID)) %>%
+  add(geom_line(alpha = 0.3)) %>%
+  add(facet_wrap(~arm)) %>%
+  add(stat_smooth(
+    aes(group = 1), 
+    method = "lm", 
+    se = FALSE,
+    color = "#7d0e40",
+    size = 2
+  )) %>%
+  add(stat_summary(
+    aes(group = 1), 
+    geom = "point", 
+    fun.y = mean, 
+    shape = 17, 
+    size = 3
+  ))
+```
+
+Differences between Self-Report (subjectively measured active minutes) and Vibrent reported (objectively measured) active minutes,
+
+```{r, fig.height = 16, fig.width = 8}
+grid::grid.newpage()
+grid::grid.draw(
+    grouped_ggscatterstats(
+    data = SSout,
+    x = vig_mod_min,
+    y = activeMinutes,
+    grouping.var = measureTime,
+    marginal.type = "boxplot",
+    type = "nonparametric",
+    nrow = 3,
+    xlab = "Self-Reported AM",
+    ylab = "Vibrent-Captured AM",
+    line.color = "black"
+  )
+)
+```
+
+### Modelling
+
+Simple queries
+
+```{r}
+gt150 <- SSout %>%
+  filter(measureTime == "Baseline") %>% 
+  mutate(
+    gt150 = ifelse(activeMinutes < 150, 0, 1), 
+    gt150 = factor(gt150, 0:1, c("< 150 AM", ">= 150 AM"))
+  ) %>% 
+  select(activeMinutes, gt150, arm)
+
+gt150 %>% 
+  tabyl(gt150, arm) %>%
+  adorn_percentages("col") %>%
+  adorn_pct_formatting() %>%
+  adorn_ns() %>%
+  tableStyle()
+```
+
+```{r}
+mod <- glm(gt150 ~ arm, data = gt150, family = binomial(link = "logit"))
+
+tab_model(mod)
+```
+
+#### ANOVA/ANCOVA
+
+Primary Outcome Cohort: 2-way ANOVA first, using an intent-to-treat approach (everyone at baseline).
+
+```{r}
+CGPfunctions::Plot2WayANOVA(activeMinutes ~ measureTime * arm,
+                            data = SSout,
+                            mean.label = TRUE)
+```
+
+```{r}
+scale2 <- function(x) {
+  (x - mean(x, na.rm = TRUE)) / (2 * sd(x, na.rm = TRUE))
+}
+
+SSout <- SSout %>% mutate(baseline_goal = scale2(baseline_goal))
+```
+
+For ANCOVA we will include the baseline goal as a covariate, which is correlated with the outcome (mildly $\rho =$ `r round(with(SSout, cor(activeMinutes, baseline_goal, method = "spearman", use = "pairwise")), 2)`).
+
+```{r}
+wCOV <- aov(activeMinutes ~ measureTime * arm + baseline_goal + Sex + TypeSphone, 
+            data = SSout)
+car::Anova(wCOV, type = 2)
+```
+
+Adding in covariates does not noticeably improve our model.
+
+```{r}
+emmeans::pmmeans(wCOV, "baseline_goal")
+```
+
+These are the predicted means controlling for the subjective measure of self-reported active minutes.
+
+```{r}
+emmeans::pmmeans(wCOV, "measureTime", by = "arm")
+```
+
+By arm, these don't differ much.
+
+```{r}
+emmeans::emmip(wCOV, arm ~ measureTime, CIs = TRUE)
+```
+
+Adjusted significance tests
+
+```{r}
+pairs(emmeans::pmmeans(wCOV, "arm", by = "measureTime"))
+```
+
+```{r}
+pairs(emmeans::pmmeans(wCOV, "measureTime", by = "arm"))
+```
+
+#### Mixed-Models
+
+```{r}
+y <- "activeMinutes"
+raneff <- "(1 | VibrentID)"
+adj_vars <- c("arm * measureTime", "Sex", "TypeSphone", "baseline_goal")
+f <- as.formula(paste(
+  paste(y,
+        paste(adj_vars, collapse = " + "),
+        sep = " ~ "),
+  raneff,
+  collapse = " + ",
+  sep = " + "
+))
+
+mMod <- lmer(f, data = SSout)
+
+tab_model(mMod)
+plot_model(mMod, show.values = TRUE, value.offset = 0.3)
+```
+
+```{r}
+em1 <- emmeans(mMod, pairwise ~ measureTime | arm)
+
+confint(em1)
+```
+
+```{r}
+pairs(emmeans::pmmeans(mMod, "arm", by = "measureTime"))
+```
+
+```{r}
+plot_model(mMod, type = "pred", terms = c("measureTime", "arm"))
+```
+
+```{r}
+plot_model(mMod, type = "int")
+```
+
+Neat, but we have problems,
+
+Diagnostics
+
+```{r, fig.width = 12, fig.height = 6}
+a <- plot(mMod, main = "Fit vs. Residuals")
+b <- plot(
+  mMod, 
+  sqrt(abs(residuals(.))) ~ fitted(.), 
+  type = c("p", "smooth"),
+  main = "Scale-Location Plot"
+)
+c <- lattice::qqmath(mMod, main = "Q-Q Plot")
+
+cowplot::plot_grid(a, b, c, ncol = 3)
+```
+
+So, let me log transform and try again
+
+```{r}
+SSout$logAM <- log(SSout$activeMinutes)
+
+y <- "logAM"
+f <- as.formula(paste(
+  paste(y,
+        paste(adj_vars, collapse = " + "),
+        sep = " ~ "),
+  raneff,
+  collapse = " + ",
+  sep = " + "
+))
+
+mMod <- lmer(f, data = SSout %>% filter(activeMinutes > 0))
+
+tab_model(mMod)
+plot_model(mMod, show.values = TRUE, value.offset = 0.3)
+```
+
+How'd we do?
+
+```{r, fig.width = 12, fig.height = 6}
+a <- plot(mMod, main = "Fit vs. Residuals")
+b <- plot(
+  mMod, 
+  sqrt(abs(residuals(.))) ~ fitted(.), 
+  type = c("p", "smooth"),
+  main = "Scale-Location Plot"
+)
+c <- lattice::qqmath(mMod, main = "Q-Q Plot")
+
+cowplot::plot_grid(a, b, c, ncol = 3)
+```
+
+That's better
+
+Still not great. Could try a weighted method, maybe quantile/median regression?
+
+```{r}
+em1 <- emmeans(mMod, pairwise ~ measureTime | arm,
+               data = SSout %>% filter(activeMinutes > 0))
+
+confint(em1)
+```
+
+```{r}
+pairs(emmeans::pmmeans(mMod, "arm", by = "measureTime",
+                       data = SSout %>% filter(activeMinutes > 0)))
+```
+
+```{r}
+plot_model(mMod, type = "pred", terms = c("measureTime", "arm"))
+```
+
+```{r}
+plot_model(mMod, type = "int")
+```
+
+Those were the fixed effects, now the random effects (our veterans),
+
+```{r, fig.height = 30, fig.width = 15}
+broom::tidy(mMod, effects = "ran_vals") %>%
+  ggplot(aes(reorder(level, estimate), estimate)) %>%
+  add(geom_pointrange(
+    aes(ymin = estimate - 1.96 * std.error, ymax = estimate + 1.96 * std.error)
+  )) %>%
+  add(geom_hline(
+    yintercept = 0, 
+    color = "#7d0e40", 
+    linetype = "dashed",
+    size = 2
+  )) %>%
+  add(theme_trueMinimal()) %>%
+  add(theme(axis.text.x = element_blank())) %>%
+  add(coord_flip())
+```
+
+Predictions and Plotting,
+
+```{r, fig.width = 10, fig.height = 6}
+mod.frame <- mMod@frame
+mod.frame$pred.pop <- predict(mMod, re.form = NA)
+mod.frame$pred.ind <- predict(mMod)
+
+mod.frame %>%
+  ggplot(aes(measureTime, logAM)) %>%
+  add(facet_grid(~arm)) %>%
+  add(geom_point(alpha = 0.2)) %>%
+  add(geom_line(aes(group = VibrentID), alpha = 0.2)) %>%
+  add(geom_line(aes(y = pred.ind, group = VibrentID), color = "#7d0e40")) %>%
+  add(labs(
+    x = "Follow-Up Time",
+    y = "log(Active Minutes)"
+  ))
+```
+
+These are the <font color="#7d0e40">predicted</font> lines for each veteran in each arm against their <font color="grey">actual</font> data. We can see a slight increase across each time point for the SS w/coaching group in comparison with the Stay Stong arm. This is congruent with the 2-way ANOVA analysis from above, so, not too surprising.
+
+#### Full Time-Series
+
+For this we need to load all of the Vibrent active minute data,
+
+```{r}
+names(SSDB)
+```
+
+Then pre-process it by aggregating by week over both `very_active_minutes` and `fairly_active_minutes`,
+
+```{r}
+vibrent <- SSDB$vibrent %>%
+  mutate(meas_week = lubridate::floor_date(measurement_date, unit = "week")) %>%
+  group_by(VibrentID, meas_week) %>%
+  summarize(
+    VAM = sum(very_active_minutes,    na.rm = TRUE),
+    FAM = sum(fairly_active_minutes,  na.rm = TRUE),
+    LAM = sum(lightly_active_minutes, na.rm = TRUE)
+  ) %>%
+  ungroup() %>%
+  mutate(activeMinutes = rowSums(.[c("VAM", "FAM")], na.rm = TRUE))
+
+vibrent %>% head() %>% tableStyle()
+```
+
+Set follow-up week by "week from randomization date".
+
+```{r}
+SS.ts <- SSDB$arm %>%
+  left_join(
+    SSout %>%
+      select(-vig_mod_min, -FOL_complete, -SS_complete, -logAM) %>%
+      na.omit() %>%
+      distinct(VibrentID, Sex, TypeSphone, baseline_goal),
+    by = "VibrentID"
+  ) %>%
+  select(
+    VibrentID, 
+    arm, 
+    Randomized_Date,
+    Sex, 
+    TypeSphone, 
+    baseline_goal
+  ) %>%
+  left_join(vibrent, by = "VibrentID") %>%
+  filter(meas_week >= Randomized_Date) %>%
+  arrange(VibrentID, meas_week) %>%
+  group_by(VibrentID) %>%
+  mutate(
+    wk = row_number(),
+    days = meas_week - Randomized_Date
+  ) %>%
+  filter(days <= 365) %>%
+  ungroup() %>%
+  mutate(wk_std = scale2(wk))
+
+SS.ts.w0 <- SS.ts
+
+SS.ts <- SS.ts %>% 
+  filter(activeMinutes > 0) %>%
+  mutate(logAM = log(activeMinutes))
+```
+
+What's that look like for 16 randomly chosen people?
+
+```{r, fig.height = 16, fig.width = 16}
+samp <- sample(unique(SS.ts$VibrentID), 16, replace = FALSE)
+
+SS.ts %>%
+  filter(VibrentID %in% samp) %>%
+  ggplot(aes(x = wk, y = activeMinutes, group = arm, fill = arm)) %>%
+  add(geom_line(alpha = 0.5)) %>%
+  add(geom_point(color = "black", pch = 21, alpha = 0.5, size = 2)) %>%
+  add(facet_wrap(~VibrentID, nrow = 4)) %>%
+  add(theme_bw(16)) %>%
+  add(theme(legend.position = "top")) %>%
+  add(scale_fill_brewer(palette = "Set1"))
+```
+
+Is linear the best way to go? We'll see ...
+
+```{r}
+SS.ts %>%
+  group_by(VibrentID) %>% 
+  count() %>% 
+  filter(n < 5)
+```
+
+We have 39 people with less than 5 weeks of follow-up. These may wreak havoc on our analytic strategy, mathematically at least.
+
+```{r}
+ts.mod.1 <- lmer(activeMinutes ~ arm * wk_std + (1 | VibrentID), data = SS.ts)
+
+tab_model(ts.mod.1)
+plot_model(ts.mod.1, show.values = TRUE, value.offset = 0.2)
+```
+
+```{r}
+ts.mod.2 <- lmer(
+  activeMinutes ~ arm * wk_std + (1 + wk_std | VibrentID), 
+  data = SS.ts
+)
+
+tab_model(ts.mod.2)
+plot_model(ts.mod.2, show.values = TRUE, value.offset = 0.2)
+```
+
+```{r}
+anova(ts.mod.1, ts.mod.2)
+```
+
+Random intercept and slope model is more supported by the data.
+
+One more step is to adjust this for our covariates of interest,
+
+```{r}
+y <- "activeMinutes"
+raneff <- "(1 + wk_std | VibrentID)"
+adj_vars <- c("arm * wk_std", "Sex", "TypeSphone", "baseline_goal")
+f <- as.formula(paste(
+  paste(y,
+        paste(adj_vars, collapse = " + "),
+        sep = " ~ "),
+  raneff,
+  collapse = " + ",
+  sep = " + "
+))
+
+library(optimx) # lmerControl optimizer
+
+control <- lmerControl(
+  optimizer = "optimx",
+  optCtrl = list(
+    method = "nlminb",
+    starttests = FALSE,
+    kkt = FALSE
+  )
+)
+
+ts.mod.3 <- lmer(f, data = SS.ts.w0, control = control)
+
+tab_model(ts.mod.3)
+plot_model(ts.mod.3, show.values = TRUE, value.offset = 0.2)
+```
+
+Diagnostics
+
+```{r, fig.width = 12, fig.height = 6}
+a <- plot(ts.mod.3, main = "Fit vs. Residuals")
+b <- plot(
+  ts.mod.3, 
+  sqrt(abs(residuals(.))) ~ fitted(.), 
+  type = c("p", "smooth"),
+  main = "Scale-Location Plot"
+)
+c <- lattice::qqmath(ts.mod.3, main = "Q-Q Plot")
+
+cowplot::plot_grid(a, b, c, ncol = 3)
+```
+
+Between group differences,
+
+```{r}
+emmeans::emmeans(
+  ts.mod.3,
+  specs = pairwise ~ arm | wk_std,
+  at = list(wk_std = c(-0.718, 0.151, 1.053))
+)
+```
+
+Horrifying, let's log transform it,
+
+```{r}
+ts.mod.3 <- lmer(
+  log(activeMinutes) ~ arm * wk_std + Sex + TypeSphone + baseline_goal +
+                       (1 + wk_std | VibrentID), 
+  data = SS.ts, 
+  control = control
+)
+
+tab_model(ts.mod.3)
+plot_model(ts.mod.3, show.values = TRUE, value.offset = 0.2)
+```
+
+Diagnostics
+
+```{r, fig.width = 12, fig.height = 6}
+a <- plot(ts.mod.3, main = "Fit vs. Residuals")
+b <- plot(
+  ts.mod.3, 
+  sqrt(abs(residuals(.))) ~ fitted(.), 
+  type = c("p", "smooth"),
+  main = "Scale-Location Plot"
+)
+c <- lattice::qqmath(ts.mod.3, main = "Q-Q Plot")
+
+cowplot::plot_grid(a, b, c, ncol = 3)
+```
+
+Better, but these models still won't predict well in the lower tails of the distribution.
+
+```{r}
+plot_model(ts.mod.3, type = "pred", terms = c("wk_std", "arm"))
+```
+
+Estimated marginal means for data at baseline, 6-months, and 12-months from this full time-series model:
+
+```{r}
+test <- ggeffects::ggemmeans(
+  ts.mod.3, 
+  terms = c("wk_std[-0.718, 0.151, 1.053]", "arm"), 
+  type = "fe"
+)
+
+test
+plot(test)
+```
+
+Predicted Active Minutes,
+
+```{r}
+test <- ggeffects::ggpredict(
+  ts.mod.3, 
+  terms = c("wk_std[-0.718, 0.151, 1.053]", "arm"), 
+  type = "re"
+)
+
+test
+plot(test)
+```
+
+Between group differences,
+
+```{r}
+emmeans(
+  ts.mod.3, 
+  specs = trt.vs.ctrl ~ arm | wk_std, 
+  at = list(wk_std = c(-0.718, 0.151, 1.053)), 
+  type = "response"
+)
+```
+
+##### Log Errors & Response
+
+This will look weird, but we're going to try to see if we can get a better model by modeling $\log(\boldsymbol{y}) = \boldsymbol{X\beta} + \log(\boldsymbol{\epsilon})$.
+
+```{r}
+y <- "activeMinutes"
+raneff <- "(1 + wk_std | VibrentID)"
+adj_vars <- c("arm * wk_std", "Sex", "TypeSphone", "baseline_goal")
+f <- as.formula(paste(
+  paste(y,
+        paste(adj_vars, collapse = " + "),
+        sep = " ~ "),
+  raneff,
+  collapse = " + ",
+  sep = " + "
+))
+
+gcontrol <- glmerControl(
+  optimizer = "bobyqa",
+  optCtrl = list(
+    maxfun = 1e5
+  )
+)
+
+ts.mod.4 <- glmer(
+  f, 
+  data = SS.ts, 
+  control = gcontrol, 
+  family = gaussian(link = "log")
+)
+
+tab_model(ts.mod.4, transform = "exp")
+plot_model(ts.mod.4, show.values = TRUE, value.offset = 0.2, transform = "exp")
+```
+
+Diagnostics
+
+```{r, fig.width = 12, fig.height = 6}
+a <- plot(ts.mod.4, main = "Fit vs. Residuals")
+b <- plot(
+  ts.mod.4, 
+  sqrt(abs(residuals(.))) ~ fitted(.), 
+  type = c("p", "smooth"),
+  main = "Scale-Location Plot"
+)
+c <- lattice::qqmath(ts.mod.4, main = "Q-Q Plot")
+
+cowplot::plot_grid(a, b, c, ncol = 3)
+```
+
+No, not any better. But these may not be correct for glmm, we'll try DHARMa.
+
+```{r}
+library(DHARMa)
+
+simout <- simulateResiduals(fittedModel = ts.mod.4, n = 1000)
+
+plot(simout)
+```
+
+Nope, the problem is bigger than we think.
+
+```{r}
+plot_model(ts.mod.4, type = "pred", terms = c("wk_std", "arm"))
+```
+
+Well now, complete reversal from linear scale.
+
+```{r}
+plot_model(
+  ts.mod.4, 
+  type = "pred", 
+  terms = c("arm", "wk_std[-.718, 0.151, 1.053]")
+)
+```
+
+##### Hurdle Models
+
+Hurdle models assume the "zeroes" are "real" but they are not recorded until some threshold has be passed, which is actually **exactly** how the Fitbit device works.
+
+```{r, echo = TRUE, eval = FALSE}
+library(brms)
+library(Rcpp)
+
+hu <- as.formula(paste(
+    paste("hu",
+          paste(adj_vars, collapse = " + "),
+          sep = " ~ "),
+    raneff,
+    collapse = " + ",
+    sep = " + "
+))
+
+brms.huMod <- brm(
+  bf(f, hu),
+  data = SS.ts.w0,
+  family = hurdle_lognormal(),
+  cores = 3,
+  chains = 3,
+  iter = 4000,
+  warmup = 1000,
+  thin = 3
+)
+
+summary(brms.huMod)
+```
+
+```{r, echo = FALSE, eval = FALSE}
+saveRDS(brms.huMod, "models/brmsfit_activeminutes_ts.rds")
+```
+
+```{r, echo = FALSE, eval = TRUE}
+library(brms)
+library(Rcpp)
+
+brms.huMod <- readRDS("models/brmsfit_activeminutes_ts.rds")
+
+summary(brms.huMod)
+```
+
+```{r}
+pp_check(brms.huMod, nsamples = 100)
+```
+
+```{r}
+pp_check(brms.huMod, type = "scatter_avg", nsamples = 100)
+```
+
+Conditional Effects w/o "Mixed Effects"
+
+```{r}
+conditional_effects(brms.huMod)
+```
+
+Conditional Effects w/ "Mixed Effects"
+
+```{r}
+conditional_effects(brms.huMod, re_formula = NULL)
+```
+
+This is probably our *best* model. 
+
+```{r}
+newdata <- data.frame(
+  VibrentID     = rep(0, 6),
+  arm           = c(rep("CONTROL", 3), rep("INTERVENTION", 3)),
+  wk_std        = rep(c(-.718, 0.151, 1.053), 2),
+  Sex           = rep("Female", 6),
+  TypeSphone    = rep("Android", 6),
+  baseline_goal = rep(0, 6)
+)
+
+emm <- newdata %>% 
+  tidybayes::add_fitted_draws(brms.huMod, allow_new_levels = TRUE) %>% 
+  group_by(.draw, arm, wk_std) %>% 
+  summarise(.value = mean(.value, na.rm = TRUE))
+
+emm %>% 
+  ggplot(aes(x = .value, y = wk_std, fill = arm, color = arm)) %>%
+  add(tidybayes::geom_halfeyeh(alpha = 0.7)) %>% 
+  add(coord_flip()) %>%
+  add(theme_trueMinimal(16)) %>%
+  add(theme(legend.position = c(0.8, 0.8))) %>% 
+  add(scale_fill_brewer(palette = "Set1")) %>%
+  add(scale_color_brewer(palette = "Set1")) %>%
+  add(labs(
+    y = "Follow-Up Time",
+    x = "Active Minutes",
+    title = "Estimated Marginal Means Plot",
+    subtitle = "Hurdle-Model Using All Available Data"
+  ))
+```
+
+```{r, echo = FALSE, eval = TRUE}
+rm(emm)
+```
+
+#### Sensitivity Analyses
+
+From the *correspondence* section: 
+
+> You can test for reactivity in SS data by looking to see if there was a big drop off between week 1 and 2 in some patients. What % of patients had this? Do your results change if you use week 2 means at baseline?
+
+This isn't really going to be that important I can tell you right now, our choice of values can already be seen to not matter *too* much after examining the full time-series model above.
+
+```{r}
+source('functions/summarySE.R')
+source('functions/normDataWithin.R')
+source('functions/summarySEwithin.R')
+
+tmp <- SS.ts %>%
+  filter(wk <= 2) %>%
+  select(VibrentID, arm, activeMinutes, wk, wk_std)
+
+tmp %>%
+  ggplot(aes(x = wk, y = activeMinutes)) %>% 
+  add(geom_line(aes(group = VibrentID), alpha = 0.1)) %>% 
+  add(stat_smooth(method = "lm", color = "green", size = 1))
+```
+
+Not much of a trend can be seen, but if we were to take a deeper-dive,
+
+```{r}
+tmp_c <- summarySEwithin(
+  tmp,
+  measurevar = "activeMinutes",
+  withinvars = "wk",
+  idvar = "VibrentID",
+  na.rm = TRUE,
+  conf.interval = 0.95
+)
+
+tmp_c %>%
+  ggplot(aes(x = wk, y = activeMinutes, group = 1)) %>%
+  add(geom_line()) %>%
+  add(geom_errorbar(
+    width = 0.1, 
+    aes(ymin = activeMinutes - ci, ymax = activeMinutes + ci)
+  )) %>%
+  add(geom_point(shape = 21, size = 5, fill = "maroon")) %>%
+  add(theme_trueMinimal(16)) %>%
+  add(labs(
+    x = "Week from Randomization",
+    y = "Active Minutes"
+  ))
+```
+
+This shows a slight decrease by about 10 active minutes between week 1 and 2.
+
+The plot of individual data shows that there is a consistent (non)-trend for the within-subjects variable `wk`, but this would not necessarily be revealed by taking the regular standard errors (or confidence intervals) for each group. The method in Morey (2008) and Cousineau (2005) essentially normalizes the data to remove the between-subject variability and calculates the variance from this normalized data, this is depicted in the above plot.
+
+```{r, echo = FALSE, eval = TRUE}
+rm(tmp_c)
+detach('package:plyr')
+```
+
+Let's calculate the average differences,
+
+```{r}
+tmp_D <- tmp %>%
+  group_by(VibrentID) %>%
+  mutate(diff = -1 * (lag(activeMinutes) - activeMinutes)) %>%
+  ungroup() %>%
+  filter(wk == 2)
+
+psych::describe(tmp_D$diff)
+```
+
+We lost 63 folks between week 1 (n = 357) and week 2 (n = 294). the mean difference in active minutes between week 1 and week 2 is a loss of 13.9 AMs with a wide range of -1,092 to +993. However, the median is 8.
+
+```{r}
+tmp_D %>%
+  ggplot(aes(x = diff)) %>%
+  add(geom_histogram(fill = "maroon", color = "black")) %>%
+  add(theme_trueMinimal(16)) %>%
+  add(labs(
+    x = "Difference in AMs between Week 1 and Week 2",
+    y = "Frequency"
+  ))
+```
+
+The percentage of people with a "drop-off" between week 1 and week 2 is roughly 50%,
+
+```{r}
+tmp_D %>%
+  mutate(
+    loss = ifelse(diff < 0, 1, 0),
+    loss = factor(loss, 0:1, c("Loss", "Gain"))
+  ) %>%
+  tabyl(loss) %>%
+  adorn_pct_formatting()
+```
+
+The quantiles of this difference,
+
+```{r}
+quantile(tmp_D$diff, probs = seq(0, 1, 0.1), na.rm = TRUE)
+```
+
+```{r, echo = FALSE, eval = TRUE}
+rm(tmp_D)
+```
+
+##### Replace Baseline Week with Week 2
+
+```{r}
+tmp <- tmp %>%
+  filter(wk == 2) %>%
+  select(VibrentID, activeMinutes) %>%
+  mutate(measureTime = "Baseline") %>%
+  rename(alt_AM = activeMinutes)
+  
+SSSens <- SSout %>%
+  left_join(tmp, by = c("VibrentID", "measureTime")) %>%
+  mutate(
+    alt_AM = ifelse(measureTime %in% c("12 mos.", "6 mos."),
+                    activeMinutes,
+                    alt_AM),
+    measureTime = factor(measureTime,
+                         c("Baseline", "6 mos.", "12 mos."),
+                         c("Baseline", "6 mos.", "12 mos."))
+  )
+```
+
+ANOVA
+
+```{r}
+CGPfunctions::Plot2WayANOVA(alt_AM ~ measureTime * arm,
+                            data = SSSens,
+                            mean.label = TRUE)
+```
+
+ANCOVA
+
+```{r}
+wCOV <- aov(alt_AM ~ measureTime * arm + baseline_goal + Sex + TypeSphone, 
+            data = SSSens)
+car::Anova(wCOV, type = 2)
+```
+
+```{r}
+emmeans::emmip(wCOV, arm ~ measureTime, CIs = TRUE)
+```
+
+```{r}
+SSSens$logAM <- log(SSSens$alt_AM)
+
+y <- "logAM"
+raneff <- "(1 | VibrentID)"
+adj_vars <- c("arm * measureTime", "Sex", "TypeSphone", "baseline_goal")
+f <- as.formula(paste(
+  paste(y,
+        paste(adj_vars, collapse = " + "),
+        sep = " ~ "),
+  raneff,
+  collapse = " + ",
+  sep = " + "
+))
+
+mMod <- lmer(f, data = SSSens %>% filter(alt_AM > 0))
+
+tab_model(mMod)
+plot_model(mMod, show.values = TRUE, value.offset = 0.3)
+```
+
+```{r}
+plot_model(mMod, type = "pred", terms = c("measureTime", "arm"))
+```
+
+```{r}
+plot_model(mMod, type = "int")
+```
+
+#### Weighted Analysis
+
+Weighting individuals based-upon their 12-month missingness,
+
+```{r}
+miss12 <- SSout %>%
+  filter(measureTime == "12 mos.") %>%
+  mutate(miss12 = ifelse(is.na(activeMinutes), 1, 0)) %>%
+  distinct(VibrentID, miss12)
+```
+
+Collect covariates that may explain `miss12`
+
+```{r}
+race_ethnicity <- c("Non-Hispanic White",
+                    "Non-Hispanic Black",
+                    "Other")
+
+marital_cats <- c("Single", "Married")
+
+less_than_hs <- c("Some high school", "Grade school/junior high")
+trade_or_ass <- c("Trade/technical/vocational school",
+                  "Associate's degree (AA or AS)")
+
+edu_cats <- c("Less than high school",
+              "High school graduate or equivalent (GED)",
+              "Some college credit but no degree",
+              "Trade/vocational school or Associate's degree",
+              "Bachelor's degree",
+              "Post graduate work or graduate degree")
+
+finance <- c("You are having difficulty paying the bills, no matter what you do.",
+             "You have money to pay the bills, but only because you have cut back on things.", 
+             "You have enough money to pay the bills, but little spare money to buy extra or special things.", 
+             "After paying the bills, you still have enough money for special things that you want.")
+
+income <- c("Adequate Income", "Inadequate Income")
+
+gghealth <- c("Poor/Fair/Good General Health",
+              "Very Good/Excellent Health")
+
+SSfull <- SSout %>%
+  left_join(miss12, by = "VibrentID") %>%
+  left_join(
+    SSDB$baseline$Comorbidity %>%
+      mutate_if(is.integer, factor),
+    by = "VibrentID"
+  ) %>%
+  left_join(
+    SSDB$baseline$Demographics %>%
+      mutate(
+        Hispanic = as.integer(Hispanic) - 1,
+        Race_Eth = case_when(
+          race_cat == "White" & Hispanic == 0 ~ 1,
+          race_cat == "Black" & Hispanic == 0 ~ 2,
+          TRUE ~ 3
+        ),
+        Race_Eth = factor(Race_Eth, 1:3, race_ethnicity)
+      ) %>%
+      select(
+        VibrentID,
+        Race_Eth,
+        age_at_randomize,
+        Marital,
+        Children,
+        Finance,
+        Education
+      ),
+    by = "VibrentID"
+  ) %>%
+  mutate(
+    marital_cat = ifelse(Marital %in% c("Living as married", "Married"),
+                         "Married", 
+                         "Single"),
+    marital_cat = factor(marital_cat, marital_cats, marital_cats),
+    child_cat = case_when(
+      Children == "0" ~ 0,
+      Children %in% c("1", "2", "3", "4", "5", "6", "7") ~ 1
+    ),
+    child_cat = factor(child_cat, 0:1, c("No Children", "Children")),
+    edu_cat = case_when(
+      Education %in% less_than_hs ~ 1,
+      Education == "High school graduate or equivalent (GED)" ~ 2,
+      Education == "Some college credit but no degree" ~ 3,
+      Education %in% trade_or_ass ~ 4,
+      Education == "Bachelor's degree (BA or BS)" ~ 5,
+      Education == "Post graduate work or graduate degree" ~ 6
+    ),
+    edu_cat = factor(edu_cat, 1:6, edu_cats),
+    inad_income = ifelse(Finance %in% finance[1:2], 1, 0),
+    inad_income = factor(inad_income, 0:1, income)
+  ) %>%
+  left_join(
+    SSDB$baseline$Eligibility %>%
+      select(VibrentID, Calc_BMI),
+    by = "VibrentID"
+  ) %>%
+  left_join(
+    SSDB$baseline$Physical_Activity %>%
+      select(
+        VibrentID,
+        SelfEffPA_score,
+        SocSupPA_score
+      ),
+    by = "VibrentID"
+  ) %>%
+  left_join(
+    SSDB$baseline$Survey %>%
+      select(
+        VibrentID,
+        TSRQ_score,
+        PainPastWeek,
+        MOS_score
+      ),
+    by = "VibrentID"
+  ) %>%
+  left_join(
+    SSDB$baseline$Diet %>%
+      mutate(
+        goodGenHealth = case_when(
+          GenHealth %in% c("Poor", "Fair")                   ~ 0,
+          GenHealth %in% c("Good", "Very Good", "Excellent") ~ 1
+        ),
+        goodGenHealth = factor(goodGenHealth, 0:1, gghealth)
+      ) %>%
+      select(VibrentID, goodGenHealth),
+    by = "VibrentID"
+  ) %>%
+  filter(measureTime == "Baseline") %>%
+  select(
+    -Marital,
+    -Children,
+    -Finance,
+    -Education,
+    -FOL_complete,
+    -SS_complete,
+    -measureTime,
+    -logAM,
+    -sum_steps
+  ) %>%
+  na.omit()
+
+X <- data.matrix(
+  SSfull %>%
+    select(-miss12, -VibrentID) %>%
+    mutate_if(is.numeric, list(~scale2(.))) %>%
+    mutate_if(is.factor, list(~as.numeric(.) - 1))
+)
+
+row.names(X) <- SSfull$VibrentID
+
+library(glmnet)
+lasso <- glmnet(X, y = as.factor(SSfull$miss12), family = "binomial")
+```
+
+```{r, fig.width = 12, fig.height = 6}
+par(mfrow = c(1, 2))
+plot(lasso, xvar = "lambda")
+plot(lasso, xvar = "dev")
+```
+
+```{r}
+cv.lasso <- cv.glmnet(X, y = as.factor(SSfull$miss12),
+                      family = "binomial",
+                      type.measure = "class")
+
+plot(cv.lasso)
+```
+
+```{r}
+lambda <- cv.lasso$lambda.min
+
+lasso_pred <- predict(lasso, s = lambda, type = "coefficients")
+lasso_pred
+```
+
+Using the penalized likelihood approach to logistic regression/classification, the model finds `r paste(lasso_pred@Dimnames[[1]][lasso_pred@i + 1], sep = ", ", collapse = ", ")` predictors to be of particular importance.
+
+Attach the $Pr(Missing \ Active \ Minute \ Data \ at \ 12 \ Months)$ as the weights in the following model.
+
+```{r}
+miss12_wts <- predict(
+  cv.lasso, 
+  newx = X, 
+  s = "lambda.min", 
+  type = "response"
+) %>%
+  as.data.frame() %>%
+  rename(miss12_wts = `1`) %>%
+  rownames_to_column(var = "VibrentID")
+
+SSout <- SSout %>% left_join(miss12_wts, by = "VibrentID")
+
+y <- "logAM"
+raneff <- "(1 | VibrentID)"
+adj_vars <- c("arm * measureTime", "Sex", "TypeSphone", "baseline_goal")
+f <- as.formula(paste(
+  paste(y,
+        paste(adj_vars, collapse = " + "),
+        sep = " ~ "),
+  raneff,
+  collapse = " + ",
+  sep = " + "
+))
+
+mMod <- lmer(f,
+             data = SSout %>% filter(logAM > 0), 
+             weights = miss12_wts)
+
+tab_model(mMod)
+plot_model(mMod, show.values = TRUE, value.offset = 0.3)
+```
+
+```{r}
+plot_model(mMod, type = "pred", terms = c("measureTime", "arm"))
+```
+
+##### Full-Time Series
+
+```{r}
+SS.wts <- SS.ts.w0 %>%
+  left_join(miss12_wts, by = "VibrentID") %>%
+  mutate(
+    activeMinutes5 = activeMinutes + 5,
+    logAM = log(activeMinutes5)
+  )
+
+y <- "logAM"
+raneff <- "(1 + wk_std | VibrentID)"
+adj_vars <- c("arm * wk_std", "Sex", "TypeSphone", "baseline_goal")
+f <- as.formula(paste(
+  paste(y,
+        paste(adj_vars, collapse = " + "),
+        sep = " ~ "),
+  raneff,
+  collapse = " + ",
+  sep = " + "
+))
+
+ts.mod.4 <- lmer(
+  f, 
+  data = SS.wts, 
+  weights = miss12_wts,
+  control = control
+)
+
+tab_model(ts.mod.4)
+plot_model(ts.mod.4, show.values = TRUE, value.offset = 0.2)
+```
+
+```{r}
+plot_model(ts.mod.4, type = "pred", terms = c("wk_std", "arm"))
+```
+
+```{r, echo = FALSE, eval = TRUE}
+rm(SS.wts)
+```
+
+#### Stratified by Baseline Achievement
+
+```{r}
+tmp <- SSout %>%
+  left_join(
+    SSout %>%
+      filter(measureTime == "Baseline") %>%
+      mutate(
+        UnderAcheive = ifelse(activeMinutes < 150, 1, 0),
+        UnderAcheive = factor(UnderAcheive, 0:1, c("B >= 150 AM", "B < 150 AM"))
+      ) %>%
+      select(VibrentID, UnderAcheive),
+    by = "VibrentID"
+  )
+```
+
+```{r}
+y <- "logAM"
+raneff <- "(1 | VibrentID)"
+adj_vars <- c("arm * measureTime * UnderAcheive")
+f <- as.formula(paste(
+  paste(y,
+        paste(adj_vars, collapse = " + "),
+        sep = " ~ "),
+  raneff,
+  collapse = " + ",
+  sep = " + "
+))
+
+mMod <- lmer(f, data = tmp %>% filter(activeMinutes > 0))
+
+tab_model(mMod)
+plot_model(mMod, show.values = TRUE, value.offset = 0.3)
+```
+
+```{r, fig.width = 10, fig.height = 6}
+plot_model(
+  mMod, 
+  type = "pred", 
+  terms = c("measureTime", "arm", "UnderAcheive")
+)
+```
+
+Now that is kind of interesting...
+
+```{r, fig.width = 10, fig.height = 6}
+plot_model(
+  mMod, 
+  type = "pred", 
+  terms = c("measureTime", "UnderAcheive", "arm")
+)
+```
+
+##### Full-Time Series
+
+```{r}
+SS.ts <- SS.ts %>%
+  left_join(
+    tmp %>%
+      distinct(VibrentID, UnderAcheive),
+    by = "VibrentID"
+  )
+
+y <- "logAM"
+raneff <- "(1 + wk_std | VibrentID)"
+adj_vars <- c("arm * wk_std * UnderAcheive")
+f <- as.formula(paste(
+  paste(y,
+        paste(adj_vars, collapse = " + "),
+        sep = " ~ "),
+  raneff,
+  collapse = " + ",
+  sep = " + "
+))
+
+ts.mod.5 <- lmer(f, data = SS.ts, control = control)
+
+tab_model(ts.mod.5)
+plot_model(ts.mod.5, show.values = TRUE, value.offset = 0.2)
+```
+
+```{r, fig.width = 10, fig.height = 6}
+plot_model(
+  ts.mod.5, 
+  type = "pred", 
+  terms = c("wk_std", "arm", "UnderAcheive")
+)
+```
+
+```{r, echo = FALSE, eval = TRUE}
+rm(list = grep("^ts.", ls(), value = TRUE))
+```
+
+## Steps
+
+### Modelling
+
+#### ANOVA/ANCOVA
+
+Primary Outcome Cohort: 2-way ANOVA first, using an intent-to-treat approach (everyone at baseline).
+
+```{r}
+CGPfunctions::Plot2WayANOVA(mean_steps ~ measureTime * arm,
+                            data = SSout,
+                            mean.label = TRUE)
+```
+
+For ANCOVA we will include the baseline goal as a covariate, which is correlated with the outcome (mildly $\rho =$ `r round(with(SSout, cor(activeMinutes, baseline_goal, method = "spearman", use = "pairwise")), 2)`).
+
+```{r}
+wCOV <- aov(mean_steps ~ measureTime * arm + baseline_goal + Sex + TypeSphone, 
+            data = SSout)
+car::Anova(wCOV, type = 2)
+```
+
+```{r}
+emmeans::emmip(wCOV, arm ~ measureTime, CIs = TRUE)
+```
+
+Adjusted significance tests
+
+```{r}
+pairs(emmeans::pmmeans(wCOV, "arm", by = "measureTime"))
+```
+
+```{r}
+pairs(emmeans::pmmeans(wCOV, "measureTime", by = "arm"))
+```
+
+#### Mixed-Models
+
+```{r}
+y <- "mean_steps"
+raneff <- "(1 | VibrentID)"
+adj_vars <- c("arm * measureTime", "Sex", "TypeSphone", "baseline_goal")
+f <- as.formula(paste(
+  paste(y,
+        paste(adj_vars, collapse = " + "),
+        sep = " ~ "),
+  raneff,
+  collapse = " + ",
+  sep = " + "
+))
+
+mMod <- lmer(f, data = SSout)
+
+tab_model(mMod)
+plot_model(mMod, show.values = TRUE, value.offset = 0.3)
+```
+
+```{r}
+em1 <- emmeans(mMod, pairwise ~ measureTime | arm)
+
+confint(em1)
+```
+
+```{r}
+pairs(emmeans::pmmeans(mMod, "arm", by = "measureTime"))
+```
+
+```{r}
+plot_model(mMod, type = "pred", terms = c("measureTime", "arm"))
+```
+
+```{r}
+plot_model(mMod, type = "int")
+```
+
+for steps we should model them as $\sqrt{Steps}$
+
+```{r}
+y <- "sqrt(mean_steps)"
+raneff <- "(1 | VibrentID)"
+adj_vars <- c("arm * measureTime", "Sex", "TypeSphone", "baseline_goal")
+f <- as.formula(paste(
+  paste(y,
+        paste(adj_vars, collapse = " + "),
+        sep = " ~ "),
+  raneff,
+  collapse = " + ",
+  sep = " + "
+))
+
+mMod <- lmer(f, data = SSout)
+
+tab_model(mMod)
+plot_model(mMod, show.values = TRUE, value.offset = 0.3)
+```
+
+```{r}
+plot_model(mMod, type = "pred", terms = c("measureTime", "arm"))
+```
+
+```{r}
+plot_model(mMod, type = "int")
+```
+
+zeroes make things weird
+
+```{r, fig.width = 12, fig.height = 6}
+a <- plot(mMod, main = "Fit vs. Residuals")
+b <- plot(
+  mMod, 
+  sqrt(abs(residuals(.))) ~ fitted(.), 
+  type = c("p", "smooth"),
+  main = "Scale-Location Plot"
+)
+c <- lattice::qqmath(mMod, main = "Q-Q Plot")
+
+cowplot::plot_grid(a, b, c, ncol = 3)
+```
+
+#### Compound Poisson distribution
+
+Our distribution of steps/active minutes includes many zeroes, one way to model this is with a [Tweedie](https://en.wikipedia.org/wiki/Tweedie_distribution) distribution, Our data may be modelled with the Tweedie [Compound Poisson-Gamma](https://en.wikipedia.org/wiki/Compound_Poisson_distribution) which places a probability mass at 0 while also having positive support. We assume $Y = \sum_i^T X_i$, where $T$ is the number of events following a discrete count distribution and $X_i$ is the continuous portion (since continuous R.V.s cannot have any "jumps" in the CDF, i.e., zero). What this allows us to do is to set $Y=0$ when $T=0$.
+
+$$
+T \sim Pois(\lambda), \quad X_i \sim Gamma(\alpha, \gamma), \quad T \perp X_i
+$$
+
+The trick to estimating this model is in relating it to it's larger family of [exponential dispersion models](https://en.wikipedia.org/wiki/Exponential_dispersion_model). These involve the estimation of a *power variance function* $V(\mu) = \mu^p$, that is quite sensitive to the choice of $p$, known as the *power index*, $p=(\alpha + 2) / (\alpha + 1) \in (1,2)$. In practice we can estimate this model with either profile-likelihood methods or Markov chain Monte Carlo methods using the `cplm` package,
+
+```{r}
+library(cplm)
+cMod <- cpglmm(sqrt(mean_steps) ~ arm * measureTime + (1 | VibrentID),
+               data = SSout)
+
+summary(cMod)
+```
+
+Bayesian MCMC version generally provides better estimation (less biased random effects)
+
+```{r, echo = TRUE, eval = FALSE}
+bMod <- bcplm(sqrt(mean_steps) ~ arm * measureTime + (1 | VibrentID), 
+              data = SSout, 
+              n.iter = 11000, 
+              n.burnin = 1000, 
+              n.thin = 10)
+```
+
+```{r, echo = FALSE, eval = FALSE}
+saveRDS(bMod, "models/compound_poisson_steps.rds")
+```
+
+```{r, echo = FALSE, eval = TRUE}
+bMod <- readRDS("models/compound_poisson_steps.rds")
+```
+
+```{r}
+summary(bMod)
+```
+
+Convergence:
+
+```{r, fig.height = 8, fig.width = 8}
+summary(gelman.diag(bMod$sims.list)[[1]][, 1])
+lattice::xyplot(bMod$sims.list[, c(1:2, 20, 21)], xlab = NULL)
+lattice::densityplot(bMod$sims.list[, c(1:2, 20, 21)], ylab = NULL)
+```
+
+#### Full Time-Series
+
+```{r}
+vibrent <- SSDB$vibrent %>%
+  mutate(meas_week = lubridate::floor_date(measurement_date, unit = "week")) %>%
+  group_by(VibrentID, meas_week) %>%
+  summarize(
+    mean_steps = mean(steps, na.rm = TRUE)
+  ) %>%
+  ungroup()
+
+vibrent %>% head() %>% tableStyle()
+```
+
+Set follow-up week by "week from randomization date".
+
+```{r}
+SS.ts <- SSDB$arm %>%
+  select(VibrentID, arm, Randomized_Date) %>%
+  left_join(vibrent, by = "VibrentID") %>%
+  filter(meas_week >= Randomized_Date) %>%
+  arrange(VibrentID, meas_week) %>%
+  group_by(VibrentID) %>%
+  mutate(
+    wk = row_number(),
+    days = meas_week - Randomized_Date
+  ) %>%
+  filter(days <= 365) %>%
+  ungroup() %>%
+  mutate(wk_std = scale2(wk))
+```
+
+What's that look like for 16 randomly chosen people?
+
+```{r, fig.height = 16, fig.width = 16}
+samp <- sample(unique(SS.ts$VibrentID), 16, replace = FALSE)
+
+SS.ts %>%
+  filter(VibrentID %in% samp) %>%
+  ggplot(aes(x = wk, y = mean_steps, group = arm, fill = arm)) %>%
+  add(geom_line(alpha = 0.5)) %>%
+  add(geom_point(color = "black", pch = 21, alpha = 0.5, size = 2)) %>%
+  add(facet_wrap(~VibrentID, nrow = 4)) %>%
+  add(theme_bw(16)) %>%
+  add(theme(legend.position = "top")) %>%
+  add(scale_fill_brewer(palette = "Set1"))
+```
+
+I'll transform similar to the above with a $\sqrt{mean(steps/day)}$
+
+```{r, fig.height = 16, fig.width = 16}
+samp <- sample(unique(SS.ts$VibrentID), 16, replace = FALSE)
+
+SS.ts %>%
+  filter(VibrentID %in% samp) %>%
+  ggplot(aes(x = wk, y = sqrt(mean_steps), group = arm, fill = arm)) %>%
+  add(geom_line(alpha = 0.5)) %>%
+  add(geom_point(color = "black", pch = 21, alpha = 0.5, size = 2)) %>%
+  add(facet_wrap(~VibrentID, nrow = 4)) %>%
+  add(theme_bw(16)) %>%
+  add(theme(legend.position = "top")) %>%
+  add(scale_fill_brewer(palette = "Set1"))
+```
+
+```{r}
+ts.mod.1 <- lmer(
+  sqrt(mean_steps) ~ arm * wk_std + (1 | VibrentID), 
+  data = SS.ts
+)
+
+tab_model(ts.mod.1)
+plot_model(ts.mod.1, show.values = TRUE, value.offset = 0.2)
+```
+
+
+```{r}
+ts.mod.2 <- lmer(
+  sqrt(mean_steps) ~ arm * wk_std + (1 + wk_std | VibrentID), 
+  data = SS.ts,
+  control = control
+)
+
+tab_model(ts.mod.2)
+plot_model(ts.mod.2, show.values = TRUE, value.offset = 0.2)
+```
+
+```{r}
+anova(ts.mod.1, ts.mod.2)
+```
+
+```{r}
+plot_model(ts.mod.2, type = "pred", terms = c("wk_std", "arm")) %>%
+  add(labs(
+    x = "Follow-Up Week",
+    y = "sqrt(steps/day)"
+  )) %>%
+  add(theme(legend.position = "bottom"))
+```
+
+Between group differences,
+
+```{r}
+emm <- emmeans::emmeans(
+  ts.mod.2,
+  ~ arm | wk_std,
+  at = list(wk_std = c(-0.718, 0.151, 1.053))
+)
+
+contrast(regrid(emm, "response"), method = "pairwise")
+```
+
+```{r, echo = FALSE, eval = TRUE}
+rm(gt150, emm, lasso, lasso_pred, mMod, mod, mod.frame, simout, SSSens, steps,
+   steps.tp, test, tmp, ts.mod.1, ts.mod.2, wCOV, X)
+```
+

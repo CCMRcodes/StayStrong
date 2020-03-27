@@ -1,0 +1,184 @@
+# Table One
+
+```{r}
+tab <- SSout %>%
+  # Collect Baseline Physical Activity Data
+  filter(measureTime == "Baseline") %>%
+  select(
+    VibrentID,
+    arm,
+    activeMinutes,
+    mean_steps
+  ) %>%
+  # Collect Sociodemographic Factors
+  left_join(
+    SSDB$baseline$Demographics %>%
+      mutate(
+        married = ifelse(Marital %in% c("Married", "Living as married"), 1, 0),
+        married = factor(married, 0:1, c("Not Married", "Married")),
+        children_inHH = ifelse(Children == "0", 0, 1),
+        children_inHH = factor(
+          children_inHH, 
+          0:1, 
+          c("No Children", "Children")
+        ),
+        edu_cat = case_when(
+          Education %in% c("Grade school/junior high",
+                           "High school graduate or equivalent (GED)",
+                           "Some high school") ~ 0,
+          Education %in% c("Associate's degree (AA or AS)",
+                           "Some college credit but no degree",
+                           "Trade/technical/vocational school") ~ 1,
+          Education == "Bachelor's degree (BA or BS)" ~ 2,
+          Education == "Post graduate work or graduate degree" ~ 3
+        ),
+        edu_cat = factor(
+          edu_cat,
+          0:3,
+          c("High school graduate/equivalent (GED) or less",
+            "Some college, Trade/vocational, Associate's",
+            "Bachelor's degree",
+            "Post graduate work or graduate degree")
+        ),
+        FullEmploy = ifelse(Employment == "Working full time", 1, 0),
+        FullEmploy = factor(
+          FullEmploy, 
+          0:1, 
+          c("Emp: < Full-Time", "Emp: Full-Time")
+        ),
+        inad_income = ifelse(grepl("cut|difficulty", Finance), 1, 0),
+        inad_income = factor(
+          inad_income, 
+          0:1, 
+          c("Inc: Adequate", "Inc: Inadequate")
+        )
+      ) %>%
+      select(
+        VibrentID,
+        Sex,
+        age_at_randomize,
+        Race_Eth,
+        married,
+        children_inHH,
+        edu_cat,
+        FullEmploy,
+        inad_income
+      ),
+    by = "VibrentID"
+  ) %>%
+  left_join(
+    SSDB$baseline$Diet %>%
+      mutate(
+        GenHealth = factor(
+          GenHealth,
+          levels = levels(SSDB$baseline$Diet$GenHealth)[c(1, 5, 3, 2, 4)],
+          labels = levels(SSDB$baseline$Diet$GenHealth)[c(1, 5, 3, 2, 4)]
+        ),
+        GreatHealth = ifelse(grepl("Very|Excellent", GenHealth), 1, 0),
+        GreatHealth = factor(GreatHealth, 0:1, c("Meh Health", "Great Health!"))
+      ) %>%
+      select(VibrentID, GenHealth, GreatHealth),
+    by = "VibrentID"
+  ) %>%
+  # Comorbidity and Lifestyle Factors
+  left_join(
+    SSDB$baseline$Comorbidity %>%
+      select(-Depression) %>%
+      mutate_if(is.integer, factor, levels = 0:1, labels = c("No", "Yes")),
+    by = "VibrentID"
+  ) %>%
+  left_join(
+    SSDB$baseline$Survey %>%
+      mutate(
+        curr_smoker = ifelse(grepl("day", Smokenow), 1, 0),
+        curr_smoker = factor(curr_smoker, 0:1, c("No", "Yes")),
+        pain4 = ifelse(PainPastWeek >= 4, 1, 0),
+        pain4 = factor(pain4, 0:1, c("Pain < 4", "Pain >= 4"))
+      ) %>%
+      select(
+        VibrentID,
+        pain4,
+        PHQ_score,
+        PHQ_10depress,
+        PAM_score,
+        AUDIT_C_score,
+        curr_smoker
+      ),
+    by = "VibrentID"
+  ) %>%
+  mutate(
+    AUDIT_C_thresh = case_when(
+      Sex == "Male"   & AUDIT_C_score >= 4 ~ 1,
+      Sex == "Female" & AUDIT_C_score >= 3 ~ 1,
+      TRUE ~ 0
+    ),
+    AUDIT_C_thresh = factor(
+      AUDIT_C_thresh,
+      0:1,
+      c("No Alc Abuse", "Alc Abuse")
+    )
+  ) %>%
+  left_join(
+    SSDB$baseline$Eligibility %>%
+      mutate(
+        BMI5 = case_when(
+          Calc_BMI <  25.0                 ~ 0,
+          Calc_BMI >= 25.0 & Calc_BMI < 30 ~ 1,
+          Calc_BMI >= 30.0 & Calc_BMI < 35 ~ 2,
+          Calc_BMI >= 35.0 & Calc_BMI < 40 ~ 3,
+          Calc_BMI >= 40.0                 ~ 4
+        ),
+        BMI5 = factor(
+          BMI5,
+          0:4,
+          c("BMI < 25",
+            "25 <= BMI < 30",
+            "30 <= BMI < 35",
+            "35 <= BMI < 40",
+            "BMI >= 40")
+        )
+      ) %>%
+      select(VibrentID, Weight_1, Calc_BMI, BMI5),
+    by = "VibrentID"
+  ) %>%
+  # Technology Use
+  left_join(
+    SSDB$baseline$Technology_Use %>%
+      select(VibrentID, TypeSphone, TechUse_score),
+    by = "VibrentID"
+  ) %>%
+  left_join(
+    SSDB$baseline$Physical_Activity_Device %>%
+      mutate(
+        PrevFitbitUse = ifelse(grepl("Fitbit", TypePADev), 1, 0),
+        PrevFitbitUse = factor(PrevFitbitUse, 0:1, c("No", "Yes"))
+      ) %>%
+      select(VibrentID, PADevice, PrevFitbitUse),
+    by = "VibrentID"
+  ) %>%
+  select(-VibrentID)
+```
+
+We'll use the `arsenal` package for this because it gives us pretty much every statistic we're looking for,
+
+```{r, results = "asis"}
+library(arsenal)
+
+ars_cont <- tableby.control(
+  test = FALSE,
+  numeric.stats = c("meansd", "medianq1q3", "Nmiss2"),
+  cat.stats     = c("countpct", "Nmiss2"),
+  stats.labels  = list(
+    meansd     = "Mean (SD)",
+    medianq1q3 = "Median (Q1, Q3)",
+    Nmiss2     = "Missing"
+  )
+)
+
+table_one <- tableby(arm ~ ., data = tab, control = ars_cont)
+summary(table_one, title = "By Arm", digits = 1)
+```
+
+```{r, echo = FALSE, eval = TRUE}
+rm(tab, table_one, ars_cont)
+```

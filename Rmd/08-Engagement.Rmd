@@ -1,0 +1,227 @@
+# Engagement
+
+## Syncing
+
+```{r}
+SSout %>% 
+  tabyl(measureTime, SS_complete) %>% 
+  adorn_percentages("col") %>% 
+  adorn_pct_formatting() %>% 
+  adorn_ns() %>%
+  tableStyle()
+```
+
+```{r, fig.height = 8, fig.width = 16}
+fitbit_syncs <- SSDB$vibrent %>%
+  right_join(
+    arms %>%
+      select(Program_Code, Randomized_Date, arm) %>%
+      rename(VibrentID = Program_Code),
+    by = "VibrentID"
+  ) %>%
+  select(VibrentID, measurement_date, Randomized_Date, arm) %>%
+  arrange(arm, VibrentID, measurement_date) %>%
+  mutate_at(
+    vars(measurement_date, Randomized_Date),
+    list(~lubridate::floor_date(., "month"))
+  ) %>%
+  mutate(
+    study_month = lubridate::interval(Randomized_Date, measurement_date) %/% months(1) + 1
+  ) %>%
+  filter(study_month >= 1) %>%
+  distinct(arm, VibrentID, study_month) %>%
+  group_by(arm, study_month) %>%
+  mutate(how_many_syncs = max(row_number())) %>%
+  distinct(arm, study_month, how_many_syncs) %>%
+  ungroup() %>%
+  arrange(arm, study_month)
+
+# How many months have people contributed to this study so far.
+
+pad <- rep(min(fitbit_syncs$study_month):max(fitbit_syncs$study_month), 2)
+pad.df <- data.frame(
+  pad = pad,
+  arm = c(rep("CONTROL",      length(pad) / 2), 
+          rep("INTERVENTION", length(pad) / 2))
+)
+
+enrolled_by_month <- arms %>%
+  mutate(
+    Day_of_Program = as.numeric(Sys.Date() - Randomized_Date),
+    months = round(Day_of_Program / 30.417)
+  ) %>%
+  arrange(arm, months) %>%
+  group_by(arm, months) %>%
+  mutate(contribution = max(row_number())) %>%
+  ungroup() %>%
+  distinct(arm, months, contribution) %>%
+  full_join(pad.df, by = c("arm" = "arm", "months" = "pad")) %>%
+  arrange(arm, months) %>%
+  full_join(fitbit_syncs, by = c("arm" = "arm", "months" = "study_month")) %>%
+  mutate(
+    contribution = ifelse(is.na(contribution), 0, contribution),
+    sum_cont = ifelse(arm == "CONTROL", 179, 178)
+    ) %>%
+  group_by(arm) %>%
+  mutate(sum_cont = lag(sum_cont - cumsum(contribution))) %>%
+  ungroup() %>%
+  mutate(
+    sum_cont = ifelse(is.na(sum_cont) & arm == "CONTROL", 179,
+                      ifelse(is.na(sum_cont) & arm == "INTERVENTION", 178,
+                             sum_cont)),
+    prop_sync = (how_many_syncs / sum_cont) * 100
+  )
+
+byarm <- enrolled_by_month %>%
+  filter(months <= 12) %>%
+  ggplot(aes(x = months, y = prop_sync, fill = arm)) %>%
+  add(geom_bar(
+    stat = "identity",
+    position = "dodge",
+    color = "black",
+    alpha = 0.5)) %>%
+  add(geom_text(aes(label = sum_cont),
+                position = position_dodge(width = 0.9), 
+                vjust = -0.5)) %>%
+  add(scale_fill_brewer(palette = "Set1")) %>%
+  add(ggthemes::theme_hc(16)) %>%
+  add(theme(legend.position = c(0.8, 0.9))) %>%
+  add(scale_x_continuous(breaks = 1:12)) %>%
+  add(scale_y_continuous(breaks = c(0, 20, 40, 60, 80, 100))) %>%
+  add(labs(
+    x = "Month in Program",
+    y = "% Participants Syncing",
+    title = "% Participants By Month with \u2265 1 Fitbit Sync by Intervention",
+    caption = "
+    Overlaid numbers represent total number of participants (denominator) for that month
+    Enrollment month determined by randomization date",
+    fill = ""
+  )) %>%
+  add(expand_limits(y = c(0, 110)))
+
+byarm
+```
+
+Alternatively,
+
+```{r, fig.width = 8, fig.height = 6}
+enrolled_by_month %>%
+  filter(months <= 12) %>%
+  ggplot(aes(x = months, y = prop_sync, fill = arm)) %>%
+  add(geom_line()) %>%
+  add(geom_point(pch = 21, color = "black", size = 3)) %>%
+  add(scale_x_continuous(breaks = 1:12)) %>%
+  add(scale_y_continuous(breaks = c(0, 20, 40, 60, 80, 100))) %>%
+  add(ggthemes::theme_hc(16)) %>%
+  add(theme(legend.position = c(0.8, 0.8))) %>%
+  add(labs(
+    x = "Month in Program",
+    y = "% Participants Syncing",
+    title = "% Participants By Month with \u2265 1 Fitbit Sync by Intervention",
+    fill = ""
+  ))
+```
+
+
+```{r}
+scale2 <- function(x) {
+  (x - mean(x, na.rm = TRUE)) / (2 * sd(x, na.rm = TRUE))
+}
+
+mod <- glm(
+  cbind(how_many_syncs, sum_cont - how_many_syncs) ~ arm * months, 
+  family = binomial(link = "logit"),
+  data = enrolled_by_month %>%
+    filter(months <= 12) %>%
+    mutate(months = scale2(months))
+)
+
+tab_model(
+  mod,
+  title = "% Participants by Month with >= 1 Fitbit Sync by Intervention",
+  dv.labels = "% Participants Syncing"
+)
+
+plot_model(mod,  title = "Proportion Participants Syncing")
+```
+
+```{r}
+plot_model(
+  mod, 
+  type = "pred", 
+  terms = c("months", "arm"),
+  title = ""
+) %>%
+  add(labs(
+  y = "% Participants Syncing",
+  x = "Month in Program",
+  color = ""
+  )) %>%
+  add(ggthemes::theme_hc(16))
+```
+
+```{r, echo = FALSE, eval = FALSE}
+ggsave(
+  "figures/prop_sync_by_arm.tiff", 
+  p, 
+  device = "tiff",
+  height = 6, 
+  width = 8, 
+  units = "in", 
+  dpi = 800, 
+  compression = "lzw"
+)
+```
+
+GAM version
+
+```{r, fig.height = 6, fig.width = 10}
+modgam <- mgcv::gam(
+  prop_sync ~ s(months, by = arm), 
+  family = quasibinomial, 
+  data = enrolled_by_month %>%
+    filter(months <= 12) %>%
+    mutate(
+      months = scale2(months),
+      prop_sync = prop_sync / 100.0
+    )
+)
+
+gamviz <- mgcViz::getViz(modgam)
+
+print(plot(gamviz), pages = 1)
+```
+
+Fractional Regression Version
+
+```{r}
+tmp.df <- enrolled_by_month %>%
+    filter(months <= 12) %>%
+    mutate(
+      months = scale2(months),
+      prop_sync = prop_sync / 100.0
+    )
+
+x_mat <- model.matrix(prop_sync ~ arm * months, tmp.df)
+y <- tmp.df$prop_sync
+
+library(frm)
+
+frmmod <- frm(
+  y,
+  x_mat,
+  linkfrac = "logit",
+  intercept = FALSE
+)
+```
+
+Testing logit specification of the FRM using LM and Wald versions of the GGOFF test, based on 1 or 2 fitted powers of the linear predictor.
+
+```{r}
+frm.ggoff(frmmod, c("Wald", "LM"))
+```
+
+```{r}
+frm.pe(frmmod)
+```
+
