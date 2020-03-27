@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Stay Strong - Primary Analyses</title>
+  <meta name="description" content="Stay Strong Project Analytical Documentation" />
+  <meta name="generator" content="bookdown 0.17 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Stay Strong - Primary Analyses" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="Stay Strong Project Analytical Documentation" />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Stay Strong - Primary Analyses" />
+  
+  <meta name="twitter:description" content="Stay Strong Project Analytical Documentation" />
+  
+
+<meta name="author" content="Richard R. Evans" />
+
+
+<meta name="date" content="2020-02-28" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+
+<link rel="next" href="01-Data_Collection.html"/>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<script src="libs/kePrint-0.0.1/kePrint.js"></script>
+
+
+<style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="css\book.css" type="text/css" />
+<link rel="stylesheet" href="https:\\use.fontawesome.com\releases\v5.0.13\css\all.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class='before'><a href="./">Stay Strong Primary Analyses</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Rationale</a><ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#abstract"><i class="fa fa-check"></i>Abstract</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#correspondence"><i class="fa fa-check"></i>Correspondence</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="01-Data_Collection.html"><a href="01-Data_Collection.html"><i class="fa fa-check"></i>Data Collection</a><ul>
+<li class="chapter" data-level="" data-path="01-Data_Collection.html"><a href="01-Data_Collection.html#baseline"><i class="fa fa-check"></i>Baseline</a></li>
+<li class="chapter" data-level="" data-path="01-Data_Collection.html"><a href="01-Data_Collection.html#study-arm"><i class="fa fa-check"></i>Study-Arm</a></li>
+<li class="chapter" data-level="" data-path="01-Data_Collection.html"><a href="01-Data_Collection.html#month"><i class="fa fa-check"></i>6-Month</a><ul>
+<li class="chapter" data-level="" data-path="01-Data_Collection.html"><a href="01-Data_Collection.html#qualtrics-survey"><i class="fa fa-check"></i>Qualtrics Survey</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="01-Data_Collection.html"><a href="01-Data_Collection.html#month-1"><i class="fa fa-check"></i>12-Month</a><ul>
+<li class="chapter" data-level="" data-path="01-Data_Collection.html"><a href="01-Data_Collection.html#qualtrics-survey-1"><i class="fa fa-check"></i>Qualtrics Survey</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="01-Data_Collection.html"><a href="01-Data_Collection.html#vibrent-data"><i class="fa fa-check"></i>Vibrent Data</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="02-Process_Data.html"><a href="02-Process_Data.html"><i class="fa fa-check"></i>Process Data</a><ul>
+<li class="chapter" data-level="" data-path="02-Process_Data.html"><a href="02-Process_Data.html#deduplicate"><i class="fa fa-check"></i>Deduplicate</a></li>
+<li class="chapter" data-level="" data-path="02-Process_Data.html"><a href="02-Process_Data.html#active-minutes"><i class="fa fa-check"></i>Active Minutes</a><ul>
+<li class="chapter" data-level="" data-path="02-Process_Data.html"><a href="02-Process_Data.html#baseline-1"><i class="fa fa-check"></i>Baseline</a></li>
+<li class="chapter" data-level="" data-path="02-Process_Data.html"><a href="02-Process_Data.html#qualtricssurvey-collected"><i class="fa fa-check"></i>Qualtrics/Survey Collected</a></li>
+<li class="chapter" data-level="" data-path="02-Process_Data.html"><a href="02-Process_Data.html#vibrent-collected"><i class="fa fa-check"></i>Vibrent Collected</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="02-Process_Data.html"><a href="02-Process_Data.html#combine-vibrent-am-and-survey-am"><i class="fa fa-check"></i>Combine Vibrent AM and Survey AM</a></li>
+<li class="chapter" data-level="" data-path="02-Process_Data.html"><a href="02-Process_Data.html#steps"><i class="fa fa-check"></i>Steps</a></li>
+<li class="chapter" data-level="" data-path="02-Process_Data.html"><a href="02-Process_Data.html#more-processing"><i class="fa fa-check"></i>More Processing …</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="03-TableOne.html"><a href="03-TableOne.html"><i class="fa fa-check"></i>Table One</a></li>
+<li class="chapter" data-level="" data-path="04-PrimaryOutcomes.html"><a href="04-PrimaryOutcomes.html"><i class="fa fa-check"></i>Primary Outcomes</a><ul>
+<li class="chapter" data-level="" data-path="04-PrimaryOutcomes.html"><a href="04-PrimaryOutcomes.html#active-minutes-1"><i class="fa fa-check"></i>Active Minutes</a><ul>
+<li class="chapter" data-level="" data-path="04-PrimaryOutcomes.html"><a href="04-PrimaryOutcomes.html#modelling"><i class="fa fa-check"></i>Modelling</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="04-PrimaryOutcomes.html"><a href="04-PrimaryOutcomes.html#steps-1"><i class="fa fa-check"></i>Steps</a><ul>
+<li class="chapter" data-level="" data-path="04-PrimaryOutcomes.html"><a href="04-PrimaryOutcomes.html#modelling-1"><i class="fa fa-check"></i>Modelling</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="05-SecondaryOutcomes.html"><a href="05-SecondaryOutcomes.html"><i class="fa fa-check"></i>Secondary Outcomes</a><ul>
+<li class="chapter" data-level="" data-path="05-SecondaryOutcomes.html"><a href="05-SecondaryOutcomes.html#weight"><i class="fa fa-check"></i>Weight</a><ul>
+<li class="chapter" data-level="" data-path="05-SecondaryOutcomes.html"><a href="05-SecondaryOutcomes.html#anovaancova-2"><i class="fa fa-check"></i>ANOVA/ANCOVA</a></li>
+<li class="chapter" data-level="" data-path="05-SecondaryOutcomes.html"><a href="05-SecondaryOutcomes.html#mixed-models-2"><i class="fa fa-check"></i>Mixed-Models</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="05-SecondaryOutcomes.html"><a href="05-SecondaryOutcomes.html#patient-activation"><i class="fa fa-check"></i>Patient Activation</a><ul>
+<li class="chapter" data-level="" data-path="05-SecondaryOutcomes.html"><a href="05-SecondaryOutcomes.html#anovaancova-3"><i class="fa fa-check"></i>ANOVA/ANCOVA</a></li>
+<li class="chapter" data-level="" data-path="05-SecondaryOutcomes.html"><a href="05-SecondaryOutcomes.html#mixed-models-3"><i class="fa fa-check"></i>Mixed-Models</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="05-SecondaryOutcomes.html"><a href="05-SecondaryOutcomes.html#pain"><i class="fa fa-check"></i>Pain</a><ul>
+<li class="chapter" data-level="" data-path="05-SecondaryOutcomes.html"><a href="05-SecondaryOutcomes.html#mixed-models-4"><i class="fa fa-check"></i>Mixed-Models</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="05-SecondaryOutcomes.html"><a href="05-SecondaryOutcomes.html#depression-phq-8"><i class="fa fa-check"></i>Depression (PHQ-8)</a><ul>
+<li class="chapter" data-level="" data-path="05-SecondaryOutcomes.html"><a href="05-SecondaryOutcomes.html#mixed-models-5"><i class="fa fa-check"></i>Mixed-Models</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="06-SatisfactionTab.html"><a href="06-SatisfactionTab.html"><i class="fa fa-check"></i>Intervention Satisfaction</a></li>
+<li class="chapter" data-level="" data-path="07-ClinicalTrials.html"><a href="07-ClinicalTrials.html"><i class="fa fa-check"></i>ClinicalTrials.gov</a><ul>
+<li class="chapter" data-level="" data-path="07-ClinicalTrials.html"><a href="07-ClinicalTrials.html#primary-outcomes-1"><i class="fa fa-check"></i>Primary Outcomes</a><ul>
+<li class="chapter" data-level="" data-path="07-ClinicalTrials.html"><a href="07-ClinicalTrials.html#physical-activity"><i class="fa fa-check"></i>Physical Activity</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="07-ClinicalTrials.html"><a href="07-ClinicalTrials.html#secondary-outcomes-1"><i class="fa fa-check"></i>Secondary Outcomes</a><ul>
+<li class="chapter" data-level="" data-path="07-ClinicalTrials.html"><a href="07-ClinicalTrials.html#weight-1"><i class="fa fa-check"></i>Weight</a></li>
+<li class="chapter" data-level="" data-path="07-ClinicalTrials.html"><a href="07-ClinicalTrials.html#depression"><i class="fa fa-check"></i>Depression</a></li>
+<li class="chapter" data-level="" data-path="07-ClinicalTrials.html"><a href="07-ClinicalTrials.html#pain-1"><i class="fa fa-check"></i>Pain</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="08-Engagement.html"><a href="08-Engagement.html"><i class="fa fa-check"></i>Engagement</a><ul>
+<li class="chapter" data-level="" data-path="08-Engagement.html"><a href="08-Engagement.html#syncing"><i class="fa fa-check"></i>Syncing</a></li>
+</ul></li>
+<li class="divider"></li>
+<li class='after'">
+   <div style='text-align:center'>
+      <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">
+         <i class="fab fa-creative-commons fa-lg"></i>
+         <i class="fab fa-creative-commons-by fa-lg"></i>
+         <i class="fab fa-creative-commons-sa fa-lg"></i>
+      </a>
+   </div>
+</li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Stay Strong - Primary Analyses</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="header">
+<h1 class="title">Stay Strong - Primary Analyses</h1>
+<p class="author"><em>Richard R. Evans</em></p>
+<p class="date"><em>2020-02-28</em></p>
+</div>
+<div id="rationale" class="section level1">
+<h1>Rationale</h1>
+<p>This Document contains all necessary code and output to reproduce the results of the publication, “<strong>Understanding the Effect of Adding Automated and Human Coaching to an mHealth Physical Activity App for Afghanistan and Iraq Veterans: Results of a Randomized Controlled Trial of the Stay Strong Intervention</strong>”</p>
+<p>Authored by the following,</p>
+<p>Laura J. Damschroder , MPH, MSc<sup>7</sup>
+Lorraine R. Buis, PhD<sup>1</sup>
+Felicia A. McCant, MSSW<sup>2</sup>
+H. Myra Kim, ScD<sup>7</sup>
+Richard Evans, MS<sup>7</sup>
+Eugene Z. Oddone, MD, MHSc<sup>2,4</sup>
+Lori A. Bastian, MD, MPH5,<sup>6</sup>
+Gwen Hooks, MA<sup>7</sup>
+Reema Kadri, MLIS<sup>1</sup>
+Courtney White-Clark, MS<sup>2</sup>
+Caroline R. Richardson, MD<sup>1</sup>
+Jennifer M. Gierisch, PhD, MPH<sup>2,3,4</sup></p>
+<ol style="list-style-type: decimal">
+<li>University of Michigan, Department of Family Medicine, Ann Arbor, MI 48104</li>
+<li>Durham Center of Innovation to Accelerate Discovery and Practice Transformation (ADAPT), Durham VA Health Care System, Durham, NC, USA</li>
+<li>Department of Population Health Sciences, Duke University Medical Center, Durham, NC, USA</li>
+<li>Division of General Internal Medicine, Department of Medicine, Duke University Medical Center, Durham, NC, USA</li>
+<li>Division of General Internal Medicine, Department of Medicine, Yale University, New Haven, CT</li>
+<li>Pain Research, Informatics, Multimorbidities, and Education Center, VA Connecticut, West Haven, CT</li>
+<li>VA Center for Clinical Management Research, VA Ann Arbor Healthcare System,
+Ann Arbor, MI, USA</li>
+</ol>
+<div id="abstract" class="section level2">
+<h2>Abstract</h2>
+<p><strong>Background</strong></p>
+<p>Maintaining physical conditioning and a healthy weight are requirements of active military duty but many U.S. veterans lose conditioning and rapidly gain weight after they separate from active duty service. Mobile health (mHealth) interventions using wearable devices that track physical activity are common but most published trials report shorter-term outcomes and engagement often declines and it is unclear how to optimize engagement over time. Personalized health coaching approaches, through tailored automated messaging or by human coaches, has potential for increasing engagement and effectiveness of mHealth interventions. The Stay Strong Program, an mHealth intervention that is tailored for U.S. veterans of recent conflicts, tracked physical activity via Fitbit Charge 2 devices and weight via Bluetooth-enabled scale and provided a smartphone-based dashboard displaying physical activity and weight data trends over time.</p>
+<p><strong>Objectives</strong></p>
+<p>The goal of this study was to compare the effect of Stay Strong with the addition of automated and human-delivered health coaching versus Stay Strong alone, focusing on longer term physical activity levels and weight change among U.S. veterans of recent conflicts.</p>
+<p><strong>Methods</strong></p>
+<p>A comparative effectiveness randomized controlled trial to compare two active interventions to improve physical activity. Physical activity data were collected by a Fitibit Charge 2 device, and additional self-reported data were collected at baseline, six-months and twelve months post-baseline. Participants were recruited based on a U.S. national random sample of veterans of recent conflicts and were randomly assigned to Stay Strong + Coaching (N=178; intervention arm; automated tailored messaging with weekly physical activity goal plus up to three telephone calls with a health coach) or the Stay Strong app alone (N=179; smart phone app for self-monitoring of physical activity and weight); both programs lasted 12 months. Recruitment, eligibility screening, informed consent, HIPAA authorization, baseline assessment, randomization, intervention delivery (except for telephone-based health coaching) were all accomplished online or via smartphone app. The primary outcome was change in physical activity 12 months post-baseline as measured by Active Minutes (minutes of moderate/vigorous activity in bouts lasting at least 10 minutes); secondary outcomes were changes in weight and patient activation.</p>
+<p><strong>Results</strong></p>
+<p>Participants assigned to Stay Strong alone recorded 190 (IQR:83-354) Active Minutes in their baseline week and those assigned to Stay Strong+Coaching recorded 165 (IQR:75-328) Active Minutes. There were no differences between arms in changes in physical activity levels from baseline to 12 months post-baseline (P=.40). Both groups recorded 3.04? fewer Active Minutes per week at 12 months, which was significantly lower compared to baseline (P&lt;.001). However, 59% (n=120) of participants randomized to Stay Strong and 62% (n=110) randomized to Stay Strong+Coaching failed to sync their Fitbit device at 12-months and were thus lost to follow-up.</p>
+<p><strong>Conclusions</strong></p>
+<p>This comparative effectiveness randomized controlled trial found that phone-based health coaching plus automated weekly personalized goal messages with personalized and standard motivational messaging via smartphone app did not improve levels of physical activity compared to using a smartphone app (Stay Strong) with Fitbit physical activity device alone among US veterans of recent conflicts. This trial relied on online/smartphone interactions without human interaction other than responding to technology issues over the phone as needed. Long-term engagement in mHealth interventions without human contact is challenging; nearly two-thirds of the trial’s 357 participants failed to sync their Fitbit device at 12-months and thus were lost to follow-up.</p>
+<p>Trial Registration: clinicaltrials.gov identifier: <a href="https://clinicaltrials.gov/ct2/show/NCT02360293">NCT02360293</a></p>
+</div>
+<div id="correspondence" class="section level2">
+<h2>Correspondence</h2>
+<p>A lot of discussion regarding directions in which to take the analyses come from meetings and emails sent between study investigators. While I have not transcribed any meetings, I have kept a log of <em>important</em> emails that may help illuminate the direction with which we are taking these analyses. So, here they are,</p>
+<p><strong>From</strong>: Evans, Richard R.<br />
+<strong>Sent</strong>: Monday, August 12, 2019 12:05 PM<br />
+<strong>To</strong>: Damschroder, Laura <a href="mailto:Laura.Damschroder@va.gov" class="email">Laura.Damschroder@va.gov</a>;<br />
+Kim, Myra (Ann Arbor) <a href="mailto:myrakim@umich.edu" class="email">myrakim@umich.edu</a><br />
+<strong>Subject</strong>: Stay Strong Very Preliminary Analysis</p>
+<p>Hello,</p>
+<p>I’m attaching very early Stay Strong outcomes analysis. Overall I’m seeing a slight intervention effect, though non-significant at 6 and 12 months. I used a 2-way ANOVA and an ANCOVA as well as a mixed-modeling approach (at the end is an experimental method). I haven’t begun to add covariates yet and I believe I will have to remove the 6-month time point for the clinicalTrials.gov analysis.</p>
+<p>Stay Tuned.
+Rich</p>
+<hr />
+<p><strong>From</strong>: Damschroder, Laura <a href="mailto:Laura.Damschroder@va.gov" class="email">Laura.Damschroder@va.gov</a><br />
+<strong>Sent</strong>: Monday, August 12, 2019 12:05 PM<br />
+<strong>To</strong>: Evans, Richard R <a href="mailto:Richard.Evans8@va.gov" class="email">Richard.Evans8@va.gov</a><br />
+Kim, Myra (Ann Arbor) <a href="mailto:myrakim@umich.edu" class="email">myrakim@umich.edu</a><br />
+<strong>Subject</strong>: Stay Strong Very Preliminary Analysis</p>
+<p>Here are some notes/observations. Oy. Not much to see – everyone reduced PA. It may well be that simply getting the device that week was enough to get people walking more. But then the “new” wears off and people slow down. Intervention didn’t help though it very slightly helped lessen the decrease in the first six months; the negligent effect of coaching completely wore off 6-12 months.</p>
+<p>Notes;
+Both groups decreased PA from baseline to 12mo
+Data are highly non-normal…you attempt to address that later …
+Values are very close for intervention v control but intervention started lower and decreased PA less than control at baseline to 6 months; both slopes look the same for 6 to 12 months.
+Based on mixed models, PA decreased from baseline to 12 months, pooled; no intervention effect
+Residuals are “squirrely” (bad distribution) … log transformed model shows decreased PA at 6 and 12 months; no intervention effect
+Same results basically, with median/quartile model</p>
+<p>I guess this isn’t surprising.
+Where do we go next?
+Laura</p>
+<hr />
+<p><strong>From</strong>: Kim, Myra (Ann Arbor) <a href="mailto:myrakim@umich.edu" class="email">myrakim@umich.edu</a><br />
+<strong>Sent</strong>: Tuesday, August 13, 2019 2:59 PM
+<strong>To</strong>: Evans, Richard R <a href="mailto:Richard.Evans8@va.gov" class="email">Richard.Evans8@va.gov</a><br />
+Damschroder, Laura <a href="mailto:Laura.Damschroder@va.gov" class="email">Laura.Damschroder@va.gov</a><br />
+<strong>Subject</strong>: Stay Strong Very Preliminary Analysis</p>
+<p>It looks like Rich did more than what we set out to do and there is no real signal that suggests that SS is effective and not much else meaningful to extract out of this.</p>
+<p>One thing I think we can legitimately try is to weight the analyses by the likelihood of missingness (predicted probability of missing 12 months, for example) since it looks like we lost about 50% by 12 months. If you do find particular baseline characteristics to be predictive of missingness (e.g., older tends to miss more), then we should also include those into the mixed model as covariates.</p>
+<p>Another next move will be to use vibrent data obtained at all times using the actual days since randomization as the time variable rather than data consolidated at 6 and 12 month and use mixed model.</p>
+<p>Would you be able to try them? Thanks, Myra</p>
+<hr />
+<p><strong>From</strong>: Evans, Richard R <a href="mailto:Richard.Evans8@va.gov" class="email">Richard.Evans8@va.gov</a><br />
+<strong>Sent</strong>: Tuesday, August 13, 2019 2:59 PM<br />
+<strong>To</strong>: Kim, Myra (Ann Arbor) <a href="mailto:myrakim@umich.edu" class="email">myrakim@umich.edu</a><br />
+Damschroder, Laura <a href="mailto:Laura.Damschroder@va.gov" class="email">Laura.Damschroder@va.gov</a><br />
+<strong>Subject</strong>: Stay Strong Very Preliminary Analysis</p>
+<p>I can work on these approaches.</p>
+<p>For the 1st approach, would we be employing a logistic model predicting “12-months missing”? Or did you have something else in mind? I think I’ll have to brain-storm which covariates to include.</p>
+<p>Rich</p>
+<hr />
+<p><strong>From</strong>: Hyungjin Kim <a href="mailto:myrakim@umich.edu" class="email">myrakim@umich.edu</a><br />
+<strong>Sent</strong>: Tuesday, August 13, 2019 5:47 PM<br />
+<strong>To</strong>: Evans, Richard R. <a href="mailto:Richard.Evans8@va.gov" class="email">Richard.Evans8@va.gov</a><br />
+<strong>Cc</strong>: Damschroder, Laura <a href="mailto:Laura.Damschroder@va.gov" class="email">Laura.Damschroder@va.gov</a><br />
+<strong>Subject</strong>: Re: [EXTERNAL] Re: Stay Strong Very Preliminary Analysis</p>
+<p>Yes, logistic, and I’d include demographics and maybe include baseline pain at minimum? And yes, we can brainstorm the predictors. Thanks, Myra</p>
+<hr />
+<p><strong>From</strong>: Damschroder, Laura <a href="mailto:Laura.Damschroder@va.gov" class="email">Laura.Damschroder@va.gov</a><br />
+<strong>Sent</strong>: Tuesday, August 13, 2019 5:47 PM<br />
+<strong>To</strong>: Evans, Richard R. <a href="mailto:Richard.Evans8@va.gov" class="email">Richard.Evans8@va.gov</a><br />
+<strong>Cc</strong>: Hyungjin Kim <a href="mailto:myrakim@umich.edu" class="email">myrakim@umich.edu</a><br />
+<strong>Subject</strong>: Re: [EXTERNAL] Re: Stay Strong Very Preliminary Analysis</p>
+<p>Why add pain? Conceptually, I can see why but we didn’t say we would include this in the base model.
+Depression and pain are outcomes in secondary analyses.
+Our protocol says this:
+The model will be adjusted for stratification factors of
+sex, operating system, and baseline activity level (high vs low).
+Time may be parameterized appropriately if a nonlinear slope
+over time is suggested in graphical examination of the outcome
+measures over time</p>
+<hr />
+<p><strong>From</strong>: Hyungjin Kim <a href="mailto:myrakim@umich.edu" class="email">myrakim@umich.edu</a><br />
+<strong>Sent</strong>: Tuesday, August 13, 2019 5:47 PM<br />
+<strong>To</strong>: Evans, Richard R. <a href="mailto:Richard.Evans8@va.gov" class="email">Richard.Evans8@va.gov</a><br />
+<strong>Cc</strong>: Damschroder, Laura <a href="mailto:Laura.Damschroder@va.gov" class="email">Laura.Damschroder@va.gov</a><br />
+<strong>Subject</strong>: Re: [EXTERNAL] Re: Stay Strong Very Preliminary Analysis</p>
+<p>I just picked it from conceptual perspective. And if it makes sense conceptually (e.g., those with more baseline pain (likely reflecting more of chronic pain) might be more or less likely to discontinue participation, then it is to address that. These variables are probably not spelled out in the proposal because we would not know ahead of the time which variables will be predictive of missingness, but if they are predictive, then we can either weigh them based on likelihood of missingness or include those predictors in the model. It is just baseline pain, not post-intervention pain.</p>
+<p>But you also reminded us that we need to adjust the basic model by the stratification factors. Rich, would you be able to add those to all models you tried so far?</p>
+<p>Thanks, Myra</p>
+<hr />
+<p><strong>From</strong>: Evans, Richard R.<br />
+<strong>Sent</strong>: Wednesday, August 14, 2019 12:20 PM<br />
+<strong>To</strong>: Kim, Myra (Ann Arbor) <a href="mailto:myrakim@umich.edu" class="email">myrakim@umich.edu</a>;<br />
+Damschroder, Laura <a href="mailto:Laura.Damschroder@va.gov" class="email">Laura.Damschroder@va.gov</a><br />
+<strong>Subject</strong>: RE: [EXTERNAL] Re: Stay Strong Very Preliminary Analysis</p>
+<p>Here is the analysis including baseline activity, type of OS/Smart phone, and sex. The results don’t change much, at least in terms of overall SS vs. SS w/coaching.</p>
+<p>Rich</p>
+<hr />
+<p>On Thu, Aug 15, 2019 at 4:52 PM Damschroder, Laura <a href="mailto:Laura.Damschroder@va.gov" class="email">Laura.Damschroder@va.gov</a> wrote:</p>
+<p>Looking at graphs of change over time, intervention v control, it does seem that intervention had an effect on rate of change (tho not sig, I guess) in the first 6 months: intervention started at lower baseline and maintained their PA level while controls started with higher baseline PA but declined to a level slightly below intervention at 6 months. Though differences in point estimates for baseline and at 6mo may not be sig different, the slope does seem to be.</p>
+<blockquote>
+<p>But between 6 and 12months, absolutely no difference: the slopes look exactly the same. Is the above from the new file Rich sent? Though the graphs with blue and red lines show what you described, nothing is significant, the change is in the opposite direction from expected/hypothesized and what happens in control group might be mostly due to regression to the mean. Hence I think we see no difference once adjusting for baseline (graph right above “Adjusted Significance Tests”). And in the case where we are looking at only two time points (baseline and 6 months), the difference is the slope, so if the difference is not significant, the slope is not…</p>
+</blockquote>
+<p>I need help interpreting your analyses I’m not sure what I’m seeing with all the various output. Are there separate comparisons of slopes for baseline to 6mo and then 6mo to 12mo somewhere?</p>
+<blockquote>
+<p>If you look at the table under “Mixed-Models”, there is an overall significant drop in active minutes in both groups (p = 0.041), but the drops from baseline did not differ by groups at both 6 (p = 0.79) and 12 months (p = 0.97).</p>
+</blockquote>
+<p>In the “pretty” tables showing significance with 6/12mo coeffs, is this saying that reduction in PA is significantly lower than baseline for everyone? What is the meaning of “baseline goal” variable … Is this saying that baseline goal somewhat predicts follow-up PA (coeff = .04)?</p>
+<blockquote>
+<p>And in the “pretty” table, it shows pretty much the same results as the above, except now drop from baseline to both 6 and 12 months are each significant (p &lt; .001). But no difference by arm.</p>
+</blockquote>
+<p>Agreed that the residual plots look weird; even after your transformations; it’s better, but still has that strange linear “hairline” of obs in the negative half of the graph.</p>
+<blockquote>
+<p>I think the linear hair line is because there are substantial number of people with 0 active minutes included in the data.</p>
+</blockquote>
+<p>In your plot of individual predicted PA by pt, the lines decrease from baseline to 6mo and 6mo to 12mo…but your comment says “We can see a slight increase across each time point for the SS w/coaching group in comparison with the Stay Stong arm” – are you saying that the whole “bunch” of red lines are shifted slightly higher for intervention versus control?</p>
+<p>At this point, what would the concluding statements of findings say?</p>
+<blockquote>
+<p>Active minutes decline in both groups over the 12 months, and no difference in the rate of decline was found between arms. - Myra</p>
+</blockquote>
+<hr />
+<p>On Fri, Aug 16, 2019 at 12:59 PM Evans, Richard R. <a href="mailto:Richard.Evans8@va.gov" class="email">Richard.Evans8@va.gov</a> wrote:</p>
+<p>[Omitted] … As for the analyses, I concur with Myra’s comments below. In response to “Are there separate comparisons of slopes for baseline to 6mo and then 6mo to 12mo somewhere?”, we can also look at the bootstrapped contrast statements in the ANOVA/ANCOVA analysis section, but they come to the same conclusion: no difference in group between either time point, slopes appear similar.</p>
+<p>I still plan on doing the weighted analysis by 12 month missing and the full time-series analyses.</p>
+<p>Rich</p>
+<hr />
+<p><strong>From</strong>: Evans, Richard R.<br />
+<strong>Sent</strong>: Wednesday, August 21, 2019 4:46 PM<br />
+<strong>To</strong>: Kim, Myra (Ann Arbor) <a href="mailto:myrakim@umich.edu" class="email">myrakim@umich.edu</a>;<br />
+Damschroder, Laura <a href="mailto:Laura.Damschroder@va.gov" class="email">Laura.Damschroder@va.gov</a><br />
+<strong>Subject</strong>: Weighted Analysis and Weight Analysis</p>
+<p>I’ve added two more sections to the analysis document, “Weighted Analysis” and “Modeling: Weight Analysis”.</p>
+<p>In the Weighted Analysis I choose to predict missingness at 12-months (active minutes) through a penalized (LASSO) logistic regression incorporating about 20 covariates, then used the score from this model as weights in a mixed model predicting active minutes in two ways, specific follow-up time points (baseline, 6 mos., 12 mos.) and the full-time series. The results are very similar to the unweighted analysis.</p>
+<p>For the Weight analysis, I did not “clean” any of the CDW weights, just deduplicated them. Then used days since baseline as the follow-up time for each subsequent weight in a full-time series analysis mixed model. This analysis does not show any strong effect between arm, though there may be a strong signal by sex.</p>
+<p>I still would like to include seasonality into the models to see what effect it has, stay tuned.</p>
+<p>Rich</p>
+<hr />
+<p>On Mon, Aug 26, 2019 at 5:16 PM Damschroder, Laura <a href="mailto:Laura.Damschroder@va.gov" class="email">Laura.Damschroder@va.gov</a> wrote:</p>
+<p>Pretty much the same results, right? It’s a mystery why iPhone matters so much.
+Are we narrowing in on a preferred model – beyond the required adjusted ANCOVA?
+In your next round of output, can you insert Table 1 data?</p>
+<p>Thanks!</p>
+<hr />
+<p><strong>From</strong>: Damschroder, Laura<br />
+<strong>Sent</strong>: Tuesday, September 3, 2019 11:16 AM<br />
+<strong>To</strong>: Evans, Richard R. <a href="mailto:Richard.Evans8@va.gov" class="email">Richard.Evans8@va.gov</a>;<br />
+Mccant, Felicia A. <a href="mailto:Felicia.McCant@va.gov" class="email">Felicia.McCant@va.gov</a>;<br />
+Kim, Myra (Ann Arbor) <a href="mailto:myrakim@umich.edu" class="email">myrakim@umich.edu</a><br />
+<strong>Subject</strong>: RE: Stay Strong Investigator meeting updated meeting request</p>
+<p>Thanks for the list of variables, Rich.</p>
+<p>Can you also explore the possible role of the following?</p>
+<ol style="list-style-type: decimal">
+<li>PAM (Patient Activation Measure) – lower activation at baseline may lead to less engagement/missing?</li>
+<li>Technology usage score – lower tech may lead to lower engagement/higher missing?</li>
+<li>(PADevice) ever used a PA device? Yes may lead to more missingness as they disconnect from SS and go to Fitbit directly?</li>
+</ol>
+<p>You are able to provide results for predicting missingness with the vars below?</p>
+<p>Laura</p>
+<hr />
+<p><strong>From</strong>: Damschroder, Laura<br />
+<strong>Sent</strong>: Tuesday, September 10, 2019 8:55 AM<br />
+<strong>To</strong>: Gierisch, Jennifer M DURVAMC <a href="mailto:Jennifer.Gierisch@va.gov" class="email">Jennifer.Gierisch@va.gov</a>;<br />
+Evans, Richard R. <a href="mailto:Richard.Evans8@va.gov" class="email">Richard.Evans8@va.gov</a>;<br />
+Kim, Myra (Ann Arbor) <a href="mailto:myrakim@umich.edu" class="email">myrakim@umich.edu</a><br />
+<strong>Cc</strong>: Mccant, Felicia A. <a href="mailto:Felicia.McCant@va.gov" class="email">Felicia.McCant@va.gov</a><br />
+<strong>Subject</strong>: Status of analyses and abstract</p>
+<p>I wanted to check in to see where things are for the SBM abstract and analyses more generally. I’ll be in Seattle starting tomorrow through the end of the week so I’m hoping we are still on track.</p>
+<p>Either way, our next SS meeting is next Tuesday. Rich/Myra: can we wrap up analyses for the paper? I’m not sure what all is left but I’ve got an outline with tables (attached). We only have a few more weeks before funding ends for everyone. My goal is to have a reasonable draft of the paper by the end of the month so we don’t have any remaining analyses to do (or minimal) because I’m sure your time will be taken up with other projects.</p>
+<p>We also have the depression and pain as outcomes analyses which I think will use generally the same models/approaches as for AMs, right?</p>
+<hr />
+<p><strong>From</strong>: Evans, Richard R.<br />
+<strong>Sent</strong>: Tuesday, September 10, 2019 9:23 AM<br />
+<strong>To</strong>: Damschroder, Laura <a href="mailto:Laura.Damschroder@va.gov" class="email">Laura.Damschroder@va.gov</a>;<br />
+Gierisch, Jennifer M DURVAMC <a href="mailto:Jennifer.Gierisch@va.gov" class="email">Jennifer.Gierisch@va.gov</a>;<br />
+Kim, Myra (Ann Arbor) <a href="mailto:myrakim@umich.edu" class="email">myrakim@umich.edu</a><br />
+<strong>Cc</strong>: Mccant, Felicia A. <a href="mailto:Felicia.McCant@va.gov" class="email">Felicia.McCant@va.gov</a><br />
+<strong>Subject</strong>: RE: Status of analyses and abstract</p>
+<p>The models for pain and depression will be just about the same, obviously we cannot do the time-series type analysis. I can kick it into high gear when it comes to filling out the attached tables. To be clear, the models you would like to report for the SBM abstract/analysis are ANCOVA and the time-series mixed-model, correct?</p>
+<p>Rich</p>
+<hr />
+<p>On Tue, Sep 10, 2019 at 9:51 AM Damschroder, Laura <a href="mailto:Laura.Damschroder@va.gov" class="email">Laura.Damschroder@va.gov</a> wrote:</p>
+<p>RE: the models, I think the answer is yes. I say yes because that’s what we promised in ClinicalTrials. On the other hand, what models make most sense to you and Myra – apart from our a priori analysis plan?</p>
+<p>We are submitting to JMIR which may not be as rigid about adhering to those a priori plans so if we want to flip our approach, can we? Do we want to?</p>
+<p>Laura</p>
+<hr />
+<p>On Tue, Sep 10, 2019 at 10:15 AM Kim, Myra (Ann Arbor) <a href="mailto:myrakim@umich.edu" class="email">myrakim@umich.edu</a> wrote:</p>
+<p>The way we have it is fine. Thanks, Myra</p>
+<hr />
+<p><strong>From</strong>: Evans, Richard R.<br />
+<strong>Sent</strong>: Tuesday, September 10, 2019 1:58 PM<br />
+<strong>To</strong>: Kim, Myra (Ann Arbor) <a href="mailto:myrakim@umich.edu" class="email">myrakim@umich.edu</a>;<br />
+Damschroder, Laura <a href="mailto:Laura.Damschroder@va.gov" class="email">Laura.Damschroder@va.gov</a><br />
+<strong>Cc</strong>: Gierisch, Jennifer M DURVAMC <a href="mailto:Jennifer.Gierisch@va.gov" class="email">Jennifer.Gierisch@va.gov</a>;<br />
+Mccant, Felicia A. <a href="mailto:Felicia.McCant@va.gov" class="email">Felicia.McCant@va.gov</a><br />
+<strong>Subject</strong>: RE: [EXTERNAL] Re: Status of analyses and abstract</p>
+<p>Since we are not as limited in our choice of models for the secondary outcomes (pain, depression), I’d like to get some input on which covariates we should incorporate into these models. What else lies on the pathway to depression as measured by the PHQ-8? Or pain.</p>
+<p>I was going to model depression using the PHQ-8 Score and Pain using the “Pain in Past Week” variable, but we have a few options so, let me know what your preferences.</p>
+<p>Thanks,
+Rich</p>
+<p>On Tue, Sep 10, 2019 at 2:17 PM Kim, Myra (Ann Arbor) <a href="mailto:myrakim@umich.edu" class="email">myrakim@umich.edu</a> wrote:</p>
+<p>Because this is a randomized trial, I think we should just first do it without adjusting for other covariates. But probably the most important to adjust for are baseline values of the respective outcomes which ANCOVA should take care of. Myra</p>
+<hr />
+<p><strong>From</strong>: Damschroder, Laura <a href="mailto:Laura.Damschroder@va.gov" class="email">Laura.Damschroder@va.gov</a><br />
+<strong>Sent</strong>: Monday, September 23, 2019 11:17 AM<br />
+<strong>To</strong>: Richardson, Caroline (Caroline) <a href="mailto:caroli@med.umich.edu" class="email">caroli@med.umich.edu</a><br />
+<strong>Subject</strong>: Question for you</p>
+<p>Hi Caroline –</p>
+<p>It looks like SS succeeded in reducing PA, if anything; baseline levels were pretty high (median Active Minutes 165-190/week for the 2 arms) … Laurie said you might have lit on the phenomenon of people getting excited about PA when they get their devices causing “baseline” levels to be higher. Can you point me to anything about this?</p>
+<hr />
+<p><strong>From</strong>: Richardson, Caroline (Caroline) <a href="mailto:caroli@med.umich.edu" class="email">caroli@med.umich.edu</a><br />
+<strong>Sent</strong>: Wednesday, September 25, 2019 3:02 PM<br />
+<strong>To</strong>: Damschroder, Laura <a href="mailto:Laura.Damschroder@va.gov" class="email">Laura.Damschroder@va.gov</a><br />
+<strong>Subject</strong>: [EXTERNAL] RE: Question for you</p>
+<p>Happy to discuss in more detail.</p>
+<p>The big overview is – of course there is reactivity and that is why we use pedometers.
+The more nuanced picture is that the reactivity is unrealistic and unsustainable in the first week and we see that in our own research.</p>
+<ol style="list-style-type: decimal">
+<li>We know that if we start with the first week of using the pedometer we sometimes get very high numbers. Not everyone , but enough to pull the average up.<br />
+</li>
+<li>We usually deal with this by either a) blinding or b) using the second week as baseline</li>
+<li>There are papers that show this and conflicting papers that show the opposite.</li>
+</ol>
+<p>If you think hard about it, you realize that measuring “reactivity” is nearly impossible, blinding may or may not help, and most of the published studies that say they were looking at reactivity are not really measuring reactivity at all because of their study design.</p>
+<p>You can test for reactivity in SS data by looking to see if there was a big drop off between week 1 and 2 in some patients.</p>
+<p>What % of patients had this?<br />
+Do your results change if you use week 2 means at baseline?<br />
+Sort of a sensitivity analysis.</p>
+<p><a href="https://repository.lboro.ac.uk/articles/Presence_and_duration_of_reactivity_to_pedometers_in_adults/9627965">https://repository.lboro.ac.uk/articles/Presence_and_duration_of_reactivity_to_pedometers_in_adults/9627965</a>
+<a href="https://journals.humankinetics.com/view/journals/pes/16/4/article-p343.xml">https://journals.humankinetics.com/view/journals/pes/16/4/article-p343.xml</a>
+<a href="https://bjsm.bmj.com/content/42/1/68.short">https://bjsm.bmj.com/content/42/1/68.short</a>
+<a href="https://www.tandfonline.com/doi/abs/10.1207/s15327841mpee1001_1">https://www.tandfonline.com/doi/abs/10.1207/s15327841mpee1001_1</a></p>
+<hr />
+<p><strong>From</strong>: Damschroder, Laura<br />
+<strong>Sent</strong>: Wednesday, September 25, 2019 3:29 PM<br />
+<strong>To</strong>: Evans, Richard R. <a href="mailto:Richard.Evans8@va.gov" class="email">Richard.Evans8@va.gov</a><br />
+<strong>Cc</strong>: Kim, Myra (Ann Arbor) <a href="mailto:myrakim@umich.edu" class="email">myrakim@umich.edu</a><br />
+<strong>Subject</strong>: FW: Question for you</p>
+<p>Rich, can you do some explorations along the lines suggested by Caroline? See highlighted below</p>
+<p>I’m not sure how to decide what is “big” change versus not, but perhaps look at distributions/histogram of change from W1 to W2 to start with?
+It is pretty straight-forward to substitute W2 PA for w1? We’ll have drop-out/missing data though, I’m sure.</p>
+<p>Laura</p>
+<hr />
+<p><strong>From</strong>: Hyungjin Kim <a href="mailto:myrakim@umich.edu" class="email">myrakim@umich.edu</a><br />
+<strong>Sent</strong>: Sunday, October 20, 2019 10:25 PM<br />
+<strong>To</strong>: Evans, Richard R. <a href="mailto:Richard.Evans8@va.gov" class="email">Richard.Evans8@va.gov</a>;<br />
+Mccant, Felicia A. <a href="mailto:Felicia.McCant@va.gov" class="email">Felicia.McCant@va.gov</a><br />
+<strong>Cc</strong>: Damschroder, Laura <a href="mailto:Laura.Damschroder@va.gov" class="email">Laura.Damschroder@va.gov</a><br />
+<strong>Subject</strong>: [EXTERNAL] StayStrong paper</p>
+<p>Hi Laura, I am copying you this just so you know. In terms of results, after reading going over the draft, protocol paper, and ClinicalTrial.gov, I decided it would be better if we stick with longitudinal data model as our main analytic approach. I also described other things we did under both Analysis and Results (called them alternate analytic approaches as I do not see them as sensitivity analyses) as much as what we did and summarized nicely in the html file Rich sent and also as informative as it can be without making them too complicated. Rich – please take a look as well.</p>
+<p>Hi Rich and Felicia,</p>
+<p>I’ve gone through the manuscript draft as much as I could for now and am attaching the edited version. I did not use tracking for Analysis and Results section. I also separated tables and figures out of the draft and created a separate document.</p>
+<p>There are comments/questions for both your names from either Laura or from myself. If you search in both documents for “Felicia” or for “Rich”, you’d find them. Would you please check those out and edit as needed?</p>
+<p>If you could also take a look at other parts, that would be nice. I can go over it again once full results are in tables, and then we can circulate to the larger group.</p>
+<p>Thank you, Myra</p>
+<hr />
+<p><strong>From</strong>: Hyungjin Kim <a href="mailto:myrakim@umich.edu" class="email">myrakim@umich.edu</a>
+<strong>Sent</strong>: Wednesday November 6, 2019 3:19 PM
+<strong>To</strong>: Evans, Richard R. <a href="mailto:Richard.Evans8@va.gov" class="email">Richard.Evans8@va.gov</a>;
+Mccant, Felicia A. <a href="mailto:Felicia.McCant@va.gov" class="email">Felicia.McCant@va.gov</a>
+<strong>Cc</strong>: Damschroder, Laura <a href="mailto:Laura.Damschroder@va.gov" class="email">Laura.Damschroder@va.gov</a>
+<strong>Subject</strong>: [EXTERNAL] StayStrong paper</p>
+<p>Hi Rich, Would you please use these tables to change the values in Tables 2 – I combined old Tables 2 and 3 because in the description Steps are considered as secondary outcome? Please also look over the Statistical Analysis to make sure that all are represented correctly. I still would like to cut some, but we will see after Discussions are added. We can do more to Satisfaction, but we can wait till others make comments (if you have time, please see my comments in the Satisfaction paragraph under Results).</p>
+<p>Laura and Felicia, Unfortunately we cannot use the model given in the IRB protocol. I don’t know where the model came from, but I should have seen this before … The model needs an important extra term indicating for 12 month. We also never explored any of the interaction terms included in the model and did not have those as our main hypotheses and thus there is no reason for us to include them. And we adjusted for slightly different stratification variables – the stratification factors might have changed after the protocol got approved? Plus, although minor and okay, a decision was made sometime ago to use baseline, 6 and 12 months data, but the model only talks about baseline and 12 month data.</p>
+<p>At any rate, since we have to upload the IRB approved protocol, we have to upload it. Only if the model could be deleted, it would be less problematic…</p>
+<p>The attached has the description of the analyses we conducted. Once Rich returns these to me, there might be minimal changes I need to make. So I will circulate to a larger group.</p>
+<p>Thank you, Myra</p>
+<hr />
+<p><strong>From</strong>: Mccant, Felicia A. <a href="mailto:Felicia.McCant@va.gov" class="email">Felicia.McCant@va.gov</a><br />
+<strong>Sent</strong>: Thursday, January 9, 2020 4:04 PM<br />
+<strong>To</strong>: Damschroder, Laura <a href="mailto:Laura.Damschroder@va.gov" class="email">Laura.Damschroder@va.gov</a>;<br />
+Evans, Richard R. <a href="mailto:Richard.Evans8@va.gov" class="email">Richard.Evans8@va.gov</a><br />
+<strong>Subject</strong>: SS Accomplishments for NIH_2020</p>
+<p>Okay</p>
+<p>I am starting to fill in the information for the FRRPR for study closeout. Laura/Rich I need one of you to edit this document to provide final information on analysis for the project.</p>
+<p>I will keep working on the other items. But this would be helpful to close out by the due date of 1/28/2020.</p>
+<p>FM</p>
+<hr />
+<p><strong>From</strong>: Damschroder, Laura <a href="mailto:Laura.Damschroder@va.gov" class="email">Laura.Damschroder@va.gov</a><br />
+<strong>Sent</strong>: Thursday, January 9, 2020 4:38 PM<br />
+<strong>To</strong>: Mccant, Felicia A. <a href="mailto:Felicia.McCant@va.gov" class="email">Felicia.McCant@va.gov</a>;<br />
+Evans, Richard R. <a href="mailto:Richard.Evans8@va.gov" class="email">Richard.Evans8@va.gov</a><br />
+<strong>Subject</strong>: RE: SS Accomplishments for NIH_2020</p>
+<p>Is this what you’re looking for?</p>
+<p>I pulled info in from the main paper and conveniently timed ARM abstract from Laurie. Rich, is there any thing we can/should pull in from pain and depression analyses? I’m thinking not … but Felicia, does the final report need something “final” for each of the aims?</p>
+<p>Laura</p>
+<hr />
+<p><strong>From</strong>: Mccant, Felicia A. <a href="mailto:Felicia.McCant@va.gov" class="email">Felicia.McCant@va.gov</a><br />
+<strong>Sent</strong>: Thursday, January 9, 2020 4:41 PM<br />
+<strong>To</strong>: Damschroder, Laura <a href="mailto:Laura.Damschroder@va.gov" class="email">Laura.Damschroder@va.gov</a>;<br />
+Evans, Richard R. <a href="mailto:Richard.Evans8@va.gov" class="email">Richard.Evans8@va.gov</a><br />
+<strong>Subject</strong>: RE: SS Accomplishments for NIH_2020</p>
+<p>Thanks I would error on the side of providing something final for each Aim.
+FM</p>
+<hr />
+<p><strong>From</strong>: Damschroder, Laura <a href="mailto:Laura.Damschroder@va.gov" class="email">Laura.Damschroder@va.gov</a><br />
+<strong>Sent</strong>: Thursday, January 9, 2020 4:48 PM<br />
+<strong>To</strong>: Mccant, Felicia A. <a href="mailto:Felicia.McCant@va.gov" class="email">Felicia.McCant@va.gov</a>;<br />
+Evans, Richard R. <a href="mailto:Richard.Evans8@va.gov" class="email">Richard.Evans8@va.gov</a><br />
+<strong>Subject</strong>: RE: SS Accomplishments for NIH_2020</p>
+<p>I do have “fodder” in for each aim but not for pain and depression; I think that’s ok … we have steps, weight, and PAM.</p>
+<p>Rich, is there anything we can say about gender effects on AMs, pain, depression, weight for Aim 3?</p>
+<p>Laura</p>
+<hr />
+<p><strong>From</strong>: Evans, Richard R. <a href="mailto:Richard.Evans8@va.gov" class="email">Richard.Evans8@va.gov</a><br />
+<strong>Sent</strong>: Thursday, January 9, 2020 4:52 PM<br />
+<strong>To</strong>: Damschroder, Laura <a href="mailto:Laura.Damschroder@va.gov" class="email">Laura.Damschroder@va.gov</a>;<br />
+Mccant, Felicia A. <a href="mailto:Felicia.McCant@va.gov" class="email">Felicia.McCant@va.gov</a><br />
+<strong>Subject</strong>: RE: SS Accomplishments for NIH_2020</p>
+<p>Perhaps I’m not following but, it appears as if you already have,</p>
+<p>“Based on 355 (90 women, 265 men) Veterans with non-missing data, women reported similar levels of physical activity (PA) compared to men based on self-reported Active Minutes (AM; (p=.15) but PA levels were lower based on Fitbit-tracked AMs (p&lt;0.001). Among women, 42% and 38% achieved the minimum recommendation of 150+ minutes/week based on self-report and Fitbit, respectively (p = 0.65). Among men, 56% and 62% achieved minimum PA levels based on self-report and Fitbit, respectively (p = 0.19). There was no gender difference (p = 0.13) in agreement between self- versus Fitbit-reported AMs.”</p>
+<hr />
+<p><strong>From</strong>: Damschroder, Laura <a href="mailto:Laura.Damschroder@va.gov" class="email">Laura.Damschroder@va.gov</a><br />
+<strong>Sent</strong>: Thursday, January 9, 2020 4:54 PM<br />
+<strong>To</strong>: Evans, Richard R. <a href="mailto:Richard.Evans8@va.gov" class="email">Richard.Evans8@va.gov</a>;<br />
+Mccant, Felicia A. <a href="mailto:Felicia.McCant@va.gov" class="email">Felicia.McCant@va.gov</a>
+<strong>Subject</strong>: RE: SS Accomplishments for NIH_2020</p>
+<p>This is based on baseline data. But ya, we should keep it in there.</p>
+<p>Aim 3 is this: test for moderation of the intervention effect of the Stay Strong with coaching intervention by gender with respect to the primary outcome of minutes of moderate to vigorous physical activity per day, as well as secondary outcomes of weight loss, depression and pain.</p>
+<hr />
+<p><strong>From</strong>: Evans, Richard R. <a href="mailto:Richard.Evans8@va.gov" class="email">Richard.Evans8@va.gov</a><br />
+<strong>Sent</strong>: Thursday, January 09, 2020 5:12 PM<br />
+<strong>To</strong>: Damschroder, Laura <a href="mailto:Laura.Damschroder@va.gov" class="email">Laura.Damschroder@va.gov</a>;<br />
+Mccant, Felicia A. <a href="mailto:Felicia.McCant@va.gov" class="email">Felicia.McCant@va.gov</a><br />
+<strong>Subject</strong>: RE: SS Accomplishments for NIH_2020</p>
+<p>If I understand correctly, this is basically a longitudinal model of,</p>
+<p>Active minutes ~ Intervention * Gender</p>
+<p>Which has not been completed yet, at least I don’t think it has, I think we can get this done by the 28th though.</p>
+<hr />
+<p><strong>From</strong>: Damschroder, Laura <a href="mailto:Laura.Damschroder@va.gov" class="email">Laura.Damschroder@va.gov</a><br />
+<strong>Sent</strong>: Friday, January 10, 2020 10:13 AM<br />
+<strong>To</strong>: Evans, Richard R. <a href="mailto:Richard.Evans8@va.gov" class="email">Richard.Evans8@va.gov</a>;<br />
+Mccant, Felicia A. <a href="mailto:Felicia.McCant@va.gov" class="email">Felicia.McCant@va.gov</a><br />
+<strong>Cc</strong>: Kim, Myra (Ann Arbor) <a href="mailto:myrakim@umich.edu" class="email">myrakim@umich.edu</a><br />
+<strong>Subject</strong>: RE: SS Accomplishments for NIH_2020</p>
+<p>Rich, if it’s feasible then we could go ahead. Yes, I think you’ve got the model right (Active minutes ~ Intervention * Gender): doing so for AMs, weight, pain and depression</p>
+<p>I’m cc’ing Myra so she’s in the loop on this.</p>
+<p>On another note: Pain might be a bit more interesting/complicated based on Myra’s latest observations and guidance on next steps for pain. Is it feasible to include findings from that as well? These latter analyses may be the most “interesting” we have to offer … :)</p>
+<p>Laura</p>
+<hr />
+<p><strong>From</strong>: Mccant, Felicia A. <a href="mailto:Felicia.McCant@va.gov" class="email">Felicia.McCant@va.gov</a><br />
+<strong>Sent</strong>: Tuesday, January 21, 2020 3:49 PM<br />
+<strong>To</strong>: Evans, Richard R. <a href="mailto:Richard.Evans8@va.gov" class="email">Richard.Evans8@va.gov</a><br />
+<strong>Cc</strong>: Damschroder, Laura <a href="mailto:Laura.Damschroder@va.gov" class="email">Laura.Damschroder@va.gov</a><br />
+<strong>Subject</strong>: FW: SS Accomplishments for NIH_2020</p>
+<p>Fyi – using the same email string as before.</p>
+<p>Here is the document that I have to upload.</p>
+<p>FM</p>
+<hr />
+<p><font color="darkblue">Progress Report for 5I01HX001163-05: Stay Strong: A physical activity program for Afghanistan and Iraq Veterans</font></p>
+<p>January 2020</p>
+<p>Project is complete. We began recruitment in Sept 2017. Recruiting was closed February 28, 2018, with 417 participants providing consent and HIPAA authorization for the project. A total of 357 participants were randomized to one of the two study arms. We completed 12 month follow-up for all outcomes in July 2019.</p>
+<p><font size="4">Aim 1</font></p>
+<p><strong>Specific Objectives</strong></p>
+<p>Evaluate the impact of an automated, centrally administered, internet-mediated, physical activity intervention, Stay Strong, on physical activity among OEF/OIF/OND Veterans.</p>
+<p><strong>Key Outcomes or other achievements</strong></p>
+<p>Recruitment was completed in six months with higher than expected response from Veterans; 18% (n = 409) of patients who were invited by letter, consented online and successfully downloaded and installed the Stay Strong app on their smartphone. A Fitbit device was shipped to these patients, 357 (87%) of whom successfully connected and synced sufficient valid data within a one-week period and were randomized to a program. Nonetheless, though 32% completed the process with no extra assistance, the remainder required additional contacts to complete this process. We proactively reached out to individuals via letter or telephone to help troubleshoot technical issues. We were successful in enrolling younger Veterans and oversampling women: average age of enrolled participants was 37 years old, 25% were female, 27% were a racial minority, and participants were geographically diverse, living in 48 of 50 states and the District of Columbia.</p>
+<p>Participants averaged 247.9 active minutes of physical activity at baseline (no difference between groups; p = .90). Both groups experienced declines in physical activity at 12-months (65.78 vs. 41.01 active minutes for Stay Strong and Stay Strong+Coaching, respectively) with no significant differences between groups (p = 0.84 for mixed-effects model). Both groups also experienced dramatic declines in engagement at 12-months as measured by syncing physical activity data (only 57% of Stay Strong and 70% of Stay Strong+Coaching participants synced valid active minutes). Accordingly, 12-month follow-up outcomes data were sparse (available in 33% of Stay Strong and 38% of Stay Strong + Coaching participants).</p>
+<p>Over 12-months, engagement across both groups was poor and physical activity declined. Although no significant differences were found in physical activity between groups at 12-months, adding coaching features to Stay Strong trended toward higher engagement and less drop-out. If engagement had been higher in one or both groups, we may have seen intervention effects.</p>
+<p><font size="4">Aim 2</font></p>
+<p><strong>Specific Objectives</strong></p>
+<p>Evaluate the impact of Stay Strong on the secondary outcomes of weight loss, depression and pain among OEF/OIF/OND Veterans.</p>
+<p><strong>Key Outcome or other achievements</strong></p>
+<p><strong>Weight</strong></p>
+<p>We expected to collect weight data via Bluetooth enabled scales. A significant number of participants were missing data for the weight from the study provided Bluetooth enabled scales, thus we used VA Corporate Data Warehouse (CDW) Clinical data for all participants. We collected based on the participant progressed through their 12-month program.</p>
+<p><strong>Baseline Results</strong></p>
+<p>Based on analyses of baseline data that we conducted for a manuscript in process, we found that 25.2% (n=90) of the 357 participants were women; over half had PTSD, 34% had depression, and 89.4% had a BMI&gt;25. Men had higher rates of inadequate income, smoking, alcohol misuse, obesity, and pain while women had higher rates of depression but higher levels of education. Over half the men met or exceeded national recommendations for 150 minutes of physical activity (62.0%) compared to only 37.8% of women veterans. Controlling for these differences, men were nearly three times as likely to achieve 150 minutes of weekly physical activity (OR=2.81; 95% CI: 1.62–4.87). Men and women veterans may have unique barriers to achieving recommended levels of physical activity. Further examination of gender differences in this population may help identify tailored strategies applicable to the general population with comorbidities.</p>
+<p>Similar to Active Minutes, there were no significant between-arm differences in step counts (P=.88), weight (P=.54) or patient activation (P=.88) from baseline to 12-months. For step counts per day averaged over a week, crude means declined from 8,163 steps per day at baseline to 5,736 at 12 months in Stay Strong arm and from 7,571 to 5,638 in Stay Strong + Coaching arm, respectively. The between-arm difference in the predicted mean at 12 months was 105 steps per day (P=.88) after adjusting for stratification factors. Various alternate models based on weekly step counts all showed significantly decreasing step counts over the 12 months in Stay Strong group (P&lt;.001), but no significant difference in the rate of decrease in step counts between arms. Unlike Active Minutes or step counts, in both treatment arms, weights did not show significant change over the 12 months follow-up time.</p>
+<p>Additional planned analyses are in progress but not yet complete.
+Self-reported depression and pain ratings have been collected from all participants at baseline; from 61% of participants at 6 months, and from 53% at 12-month program completion. The PHQ-8, a well-validated scale, was being used to elicit self-rated depression. Pain intensity and pain interference with daily activities was elicited using the VHA Standard Pain Frequency and Intensity scale.</p>
+<p><strong>Depression results</strong></p>
+<p><strong>Pain results</strong></p>
+<p><font size="4">Aim 3</font></p>
+<p><strong>Specific Objectives</strong></p>
+<p>Test for differences in adherence in the two trial arms and assess participant satisfaction with their program.</p>
+<p><strong>Major Activities</strong></p>
+<p>In addition to our prior work exploring whether women and men differ in differences in self-reports of physical activity levels versus levels measured objectively by the Fitbit Charge 2 device, we assessed adherence and satisfaction with Stay Strong.</p>
+<p><em>Significant Results</em></p>
+<p><strong>Adherence</strong></p>
+<p>For intervention, adherence was assessed by percentage with calls completed in the Stay Strong + Coaching arm only, and for protocol, adherence was assessed by percentage syncing Fitbit data in both groups. For intervention adherence, of the 178 Stay Strong + Coaching arm participants, 70% (n=126) completed at least 2 coaching calls, and 56% (n=101) completed all three phone calls. However, by six months post-baseline, 39.7% (n=71) and 31.5% (n=56) of participants in Stay Strong and Stay Strong + Coaching, respectively, did not sync their Fitbit data. By 12 months post-baseline, 67.0% (n=120) and 61.8% (n=110) in Stay Strong and Stay Strong + Coaching, respectively, did not sync their Fitibit data.</p>
+<p><strong>Satisfaction with Stay Strong</strong></p>
+<p>Satisfaction survey for Stay Strong was completed at 12 months in 51.8% of the participants. In the responders, 90.1% responded positively with responses of “likely” or “extremely likely” when asked, “how likely are you to recommend Stay Strong to another Veteran?”. To the statement “Stay Strong was a benefit to my overall health”, 68.3% of the responders agreed or strongly agreed. Overall only 11.9% agreed or strongly agreed to the statement, “I did not like wearing the Fitbit”.</p>
+<p><strong>Key Outcome or other achievements</strong></p>
+<p>Adherence to coaching calls was high for the intervention participants with 70% completing at least 2 of 3 possible calls. The third call was designed to be optional. Syncing frequency by participants, however, waned significantly by the end of the 12-month program with approximately two-thirds of participants failing to provide physical activity data by synching their Fitbit device.</p>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+
+<a href="01-Data_Collection.html" class="navigation navigation-next navigation-unique" aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": false,
+"twitter": false,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["twitter", "facebook", "google", "weibo", "instapaper"],
+"google": false,
+"instapper": false
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": null,
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": null,
+"toc": {
+"collapse": "section",
+"depth": 3,
+"scroll_highlight": true
+},
+"df_print": "kable",
+"highlight": "pygments",
+"search": true
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

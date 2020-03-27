@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Process Data | Stay Strong - Primary Analyses</title>
+  <meta name="description" content="Stay Strong Project Analytical Documentation" />
+  <meta name="generator" content="bookdown 0.17 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Process Data | Stay Strong - Primary Analyses" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="Stay Strong Project Analytical Documentation" />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Process Data | Stay Strong - Primary Analyses" />
+  
+  <meta name="twitter:description" content="Stay Strong Project Analytical Documentation" />
+  
+
+<meta name="author" content="Richard R. Evans" />
+
+
+<meta name="date" content="2020-02-28" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="01-Data_Collection.html"/>
+<link rel="next" href="03-TableOne.html"/>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<script src="libs/kePrint-0.0.1/kePrint.js"></script>
+
+
+<style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="css\book.css" type="text/css" />
+<link rel="stylesheet" href="https:\\use.fontawesome.com\releases\v5.0.13\css\all.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class='before'><a href="./">Stay Strong Primary Analyses</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Rationale</a><ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#abstract"><i class="fa fa-check"></i>Abstract</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#correspondence"><i class="fa fa-check"></i>Correspondence</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="01-Data_Collection.html"><a href="01-Data_Collection.html"><i class="fa fa-check"></i>Data Collection</a><ul>
+<li class="chapter" data-level="" data-path="01-Data_Collection.html"><a href="01-Data_Collection.html#baseline"><i class="fa fa-check"></i>Baseline</a></li>
+<li class="chapter" data-level="" data-path="01-Data_Collection.html"><a href="01-Data_Collection.html#study-arm"><i class="fa fa-check"></i>Study-Arm</a></li>
+<li class="chapter" data-level="" data-path="01-Data_Collection.html"><a href="01-Data_Collection.html#month"><i class="fa fa-check"></i>6-Month</a><ul>
+<li class="chapter" data-level="" data-path="01-Data_Collection.html"><a href="01-Data_Collection.html#qualtrics-survey"><i class="fa fa-check"></i>Qualtrics Survey</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="01-Data_Collection.html"><a href="01-Data_Collection.html#month-1"><i class="fa fa-check"></i>12-Month</a><ul>
+<li class="chapter" data-level="" data-path="01-Data_Collection.html"><a href="01-Data_Collection.html#qualtrics-survey-1"><i class="fa fa-check"></i>Qualtrics Survey</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="01-Data_Collection.html"><a href="01-Data_Collection.html#vibrent-data"><i class="fa fa-check"></i>Vibrent Data</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="02-Process_Data.html"><a href="02-Process_Data.html"><i class="fa fa-check"></i>Process Data</a><ul>
+<li class="chapter" data-level="" data-path="02-Process_Data.html"><a href="02-Process_Data.html#deduplicate"><i class="fa fa-check"></i>Deduplicate</a></li>
+<li class="chapter" data-level="" data-path="02-Process_Data.html"><a href="02-Process_Data.html#active-minutes"><i class="fa fa-check"></i>Active Minutes</a><ul>
+<li class="chapter" data-level="" data-path="02-Process_Data.html"><a href="02-Process_Data.html#baseline-1"><i class="fa fa-check"></i>Baseline</a></li>
+<li class="chapter" data-level="" data-path="02-Process_Data.html"><a href="02-Process_Data.html#qualtricssurvey-collected"><i class="fa fa-check"></i>Qualtrics/Survey Collected</a></li>
+<li class="chapter" data-level="" data-path="02-Process_Data.html"><a href="02-Process_Data.html#vibrent-collected"><i class="fa fa-check"></i>Vibrent Collected</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="02-Process_Data.html"><a href="02-Process_Data.html#combine-vibrent-am-and-survey-am"><i class="fa fa-check"></i>Combine Vibrent AM and Survey AM</a></li>
+<li class="chapter" data-level="" data-path="02-Process_Data.html"><a href="02-Process_Data.html#steps"><i class="fa fa-check"></i>Steps</a></li>
+<li class="chapter" data-level="" data-path="02-Process_Data.html"><a href="02-Process_Data.html#more-processing"><i class="fa fa-check"></i>More Processing …</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="03-TableOne.html"><a href="03-TableOne.html"><i class="fa fa-check"></i>Table One</a></li>
+<li class="chapter" data-level="" data-path="04-PrimaryOutcomes.html"><a href="04-PrimaryOutcomes.html"><i class="fa fa-check"></i>Primary Outcomes</a><ul>
+<li class="chapter" data-level="" data-path="04-PrimaryOutcomes.html"><a href="04-PrimaryOutcomes.html#active-minutes-1"><i class="fa fa-check"></i>Active Minutes</a><ul>
+<li class="chapter" data-level="" data-path="04-PrimaryOutcomes.html"><a href="04-PrimaryOutcomes.html#modelling"><i class="fa fa-check"></i>Modelling</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="04-PrimaryOutcomes.html"><a href="04-PrimaryOutcomes.html#steps-1"><i class="fa fa-check"></i>Steps</a><ul>
+<li class="chapter" data-level="" data-path="04-PrimaryOutcomes.html"><a href="04-PrimaryOutcomes.html#modelling-1"><i class="fa fa-check"></i>Modelling</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="05-SecondaryOutcomes.html"><a href="05-SecondaryOutcomes.html"><i class="fa fa-check"></i>Secondary Outcomes</a><ul>
+<li class="chapter" data-level="" data-path="05-SecondaryOutcomes.html"><a href="05-SecondaryOutcomes.html#weight"><i class="fa fa-check"></i>Weight</a><ul>
+<li class="chapter" data-level="" data-path="05-SecondaryOutcomes.html"><a href="05-SecondaryOutcomes.html#anovaancova-2"><i class="fa fa-check"></i>ANOVA/ANCOVA</a></li>
+<li class="chapter" data-level="" data-path="05-SecondaryOutcomes.html"><a href="05-SecondaryOutcomes.html#mixed-models-2"><i class="fa fa-check"></i>Mixed-Models</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="05-SecondaryOutcomes.html"><a href="05-SecondaryOutcomes.html#patient-activation"><i class="fa fa-check"></i>Patient Activation</a><ul>
+<li class="chapter" data-level="" data-path="05-SecondaryOutcomes.html"><a href="05-SecondaryOutcomes.html#anovaancova-3"><i class="fa fa-check"></i>ANOVA/ANCOVA</a></li>
+<li class="chapter" data-level="" data-path="05-SecondaryOutcomes.html"><a href="05-SecondaryOutcomes.html#mixed-models-3"><i class="fa fa-check"></i>Mixed-Models</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="05-SecondaryOutcomes.html"><a href="05-SecondaryOutcomes.html#pain"><i class="fa fa-check"></i>Pain</a><ul>
+<li class="chapter" data-level="" data-path="05-SecondaryOutcomes.html"><a href="05-SecondaryOutcomes.html#mixed-models-4"><i class="fa fa-check"></i>Mixed-Models</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="05-SecondaryOutcomes.html"><a href="05-SecondaryOutcomes.html#depression-phq-8"><i class="fa fa-check"></i>Depression (PHQ-8)</a><ul>
+<li class="chapter" data-level="" data-path="05-SecondaryOutcomes.html"><a href="05-SecondaryOutcomes.html#mixed-models-5"><i class="fa fa-check"></i>Mixed-Models</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="06-SatisfactionTab.html"><a href="06-SatisfactionTab.html"><i class="fa fa-check"></i>Intervention Satisfaction</a></li>
+<li class="chapter" data-level="" data-path="07-ClinicalTrials.html"><a href="07-ClinicalTrials.html"><i class="fa fa-check"></i>ClinicalTrials.gov</a><ul>
+<li class="chapter" data-level="" data-path="07-ClinicalTrials.html"><a href="07-ClinicalTrials.html#primary-outcomes-1"><i class="fa fa-check"></i>Primary Outcomes</a><ul>
+<li class="chapter" data-level="" data-path="07-ClinicalTrials.html"><a href="07-ClinicalTrials.html#physical-activity"><i class="fa fa-check"></i>Physical Activity</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="07-ClinicalTrials.html"><a href="07-ClinicalTrials.html#secondary-outcomes-1"><i class="fa fa-check"></i>Secondary Outcomes</a><ul>
+<li class="chapter" data-level="" data-path="07-ClinicalTrials.html"><a href="07-ClinicalTrials.html#weight-1"><i class="fa fa-check"></i>Weight</a></li>
+<li class="chapter" data-level="" data-path="07-ClinicalTrials.html"><a href="07-ClinicalTrials.html#depression"><i class="fa fa-check"></i>Depression</a></li>
+<li class="chapter" data-level="" data-path="07-ClinicalTrials.html"><a href="07-ClinicalTrials.html#pain-1"><i class="fa fa-check"></i>Pain</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="08-Engagement.html"><a href="08-Engagement.html"><i class="fa fa-check"></i>Engagement</a><ul>
+<li class="chapter" data-level="" data-path="08-Engagement.html"><a href="08-Engagement.html#syncing"><i class="fa fa-check"></i>Syncing</a></li>
+</ul></li>
+<li class="divider"></li>
+<li class='after'">
+   <div style='text-align:center'>
+      <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">
+         <i class="fab fa-creative-commons fa-lg"></i>
+         <i class="fab fa-creative-commons-by fa-lg"></i>
+         <i class="fab fa-creative-commons-sa fa-lg"></i>
+      </a>
+   </div>
+</li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Stay Strong - Primary Analyses</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="process-data" class="section level1">
+<h1>Process Data</h1>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" title="1"><span class="kw">library</span>(janitor) <span class="co"># simple table (tabyl) creation</span></a></code></pre></div>
+<p>Tidying Vibrent</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" title="1"><span class="kw">colnames</span>(vibrent) &lt;-<span class="st"> </span><span class="kw">make_clean_names</span>(<span class="kw">colnames</span>(vibrent))</a>
+<a class="sourceLine" id="cb12-2" title="2"></a>
+<a class="sourceLine" id="cb12-3" title="3">vibrentAM &lt;-<span class="st"> </span>vibrent <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb12-4" title="4"><span class="st">  </span><span class="co"># remove testing accounts</span></a>
+<a class="sourceLine" id="cb12-5" title="5"><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span><span class="kw">grepl</span>(<span class="st">&quot;[A-Za-z]&quot;</span>, program_code)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb12-6" title="6"><span class="st">  </span><span class="kw">select</span>(</a>
+<a class="sourceLine" id="cb12-7" title="7">    program_code,</a>
+<a class="sourceLine" id="cb12-8" title="8">    measurement_date,</a>
+<a class="sourceLine" id="cb12-9" title="9">    <span class="kw">contains</span>(<span class="st">&quot;active_minutes&quot;</span>)</a>
+<a class="sourceLine" id="cb12-10" title="10">  ) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb12-11" title="11"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">measurement_date =</span> <span class="kw">as.Date</span>(measurement_date, <span class="st">&quot;%m-%d-%Y&quot;</span>)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb12-12" title="12"><span class="st">  </span><span class="kw">mutate_at</span>(<span class="kw">grep</span>(<span class="st">&quot;active&quot;</span>, <span class="kw">colnames</span>(.)), as.integer) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb12-13" title="13"><span class="st">  </span><span class="kw">distinct</span>()</a></code></pre></div>
+<div id="deduplicate" class="section level2">
+<h2>Deduplicate</h2>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" title="1">dt &lt;-<span class="st"> </span>data.table<span class="op">::</span><span class="kw">as.data.table</span>(vibrentAM)</a>
+<a class="sourceLine" id="cb13-2" title="2">data.table<span class="op">::</span><span class="kw">setkey</span>(dt, program_code, measurement_date)</a>
+<a class="sourceLine" id="cb13-3" title="3">dt &lt;-<span class="st"> </span>dt[<span class="kw">duplicated</span>(dt, <span class="dt">by =</span> data.table<span class="op">::</span><span class="kw">key</span>(dt))]</a>
+<a class="sourceLine" id="cb13-4" title="4"></a>
+<a class="sourceLine" id="cb13-5" title="5"><span class="kw">dim</span>(dt)</a></code></pre></div>
+<pre><code>[1] 159   5</code></pre>
+<p>159 duplicate records (318 items to reconcile). We will take the last row for duplicated measurements as the actual values on that day, since they are usually just updated values. For example,</p>
+<pre><code>  program_code measurement_date very_active_minutes fairly_active_minutes
+1      237-975       2018-05-20                   7                    26
+  lightly_active_minutes
+1                    145</code></pre>
+<p>the last row represents the latest measurement in a day, with subject <strong>237-975</strong>, the <em>lightly_active_minutes</em> are slightly updated.</p>
+<p>Another example,</p>
+<pre><code>  program_code measurement_date very_active_minutes fairly_active_minutes
+1      236-294       2018-05-21                   0                     0
+  lightly_active_minutes
+1                    183</code></pre>
+<p>This does not prove that all cases will be the same, but it seems as solid a rule as any to proceed.</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" title="1">vibrentAM &lt;-<span class="st"> </span>vibrentAM <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb17-2" title="2"><span class="st">  </span><span class="kw">left_join</span>(dt <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb17-3" title="3"><span class="st">              </span><span class="kw">mutate</span>(<span class="dt">dup =</span> <span class="dv">1</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb17-4" title="4"><span class="st">              </span><span class="kw">select</span>(program_code, measurement_date, dup),</a>
+<a class="sourceLine" id="cb17-5" title="5">            <span class="dt">by =</span> <span class="kw">c</span>(<span class="st">&quot;program_code&quot;</span>, <span class="st">&quot;measurement_date&quot;</span>)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb17-6" title="6"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">dup =</span> <span class="kw">ifelse</span>(<span class="kw">is.na</span>(dup), <span class="dv">0</span>, dup)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb17-7" title="7"><span class="st">  </span><span class="kw">group_by</span>(program_code, measurement_date) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb17-8" title="8"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">cnt =</span> <span class="kw">row_number</span>()) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb17-9" title="9"><span class="st">  </span><span class="kw">ungroup</span>() <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb17-10" title="10"><span class="st">  </span><span class="kw">filter</span>((dup <span class="op">==</span><span class="st"> </span><span class="dv">0</span> <span class="op">&amp;</span><span class="st"> </span>cnt <span class="op">==</span><span class="st"> </span><span class="dv">1</span>) <span class="op">|</span><span class="st"> </span>(dup <span class="op">==</span><span class="st"> </span><span class="dv">1</span> <span class="op">&amp;</span><span class="st"> </span>cnt <span class="op">==</span><span class="st"> </span><span class="dv">2</span>)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb17-11" title="11"><span class="st">  </span><span class="kw">select</span>(<span class="op">-</span>dup, <span class="op">-</span>cnt)</a>
+<a class="sourceLine" id="cb17-12" title="12"></a>
+<a class="sourceLine" id="cb17-13" title="13"><span class="kw">rm</span>(dt)</a></code></pre></div>
+<p>Attach “Arm” and Reduce to <strong>only</strong> those at Baseline,</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" title="1">vibrentAM &lt;-<span class="st"> </span>arms <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb18-2" title="2"><span class="st">  </span><span class="kw">rename</span>(<span class="dt">program_code =</span> Program_Code) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb18-3" title="3"><span class="st">  </span><span class="kw">select</span>(program_code, arm) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb18-4" title="4"><span class="st">  </span><span class="kw">left_join</span>(vibrentAM, <span class="dt">by =</span> <span class="st">&quot;program_code&quot;</span>)</a></code></pre></div>
+</div>
+<div id="active-minutes" class="section level2">
+<h2>Active Minutes</h2>
+<div id="baseline-1" class="section level3">
+<h3>Baseline</h3>
+<p>Reduce Baseline data to only the small amount that we need for this project.</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" title="1">baseline &lt;-<span class="st"> </span>baseline <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb19-2" title="2"><span class="st">  </span><span class="kw">select</span>(</a>
+<a class="sourceLine" id="cb19-3" title="3">    VibrentID,</a>
+<a class="sourceLine" id="cb19-4" title="4">    Sex,</a>
+<a class="sourceLine" id="cb19-5" title="5">    Randomized_Date,</a>
+<a class="sourceLine" id="cb19-6" title="6">    vig_min_day,</a>
+<a class="sourceLine" id="cb19-7" title="7">    mod_min_day,</a>
+<a class="sourceLine" id="cb19-8" title="8">    vig_mod_min,</a>
+<a class="sourceLine" id="cb19-9" title="9">    activeMinutes</a>
+<a class="sourceLine" id="cb19-10" title="10">  )</a>
+<a class="sourceLine" id="cb19-11" title="11"></a>
+<a class="sourceLine" id="cb19-12" title="12"><span class="kw">glimpse</span>(baseline)</a></code></pre></div>
+<pre><code>Observations: 357
+Variables: 7
+$ VibrentID       &lt;chr&gt; &quot;237-975&quot;, &quot;767-848&quot;, &quot;565-276&quot;, &quot;862-392&quot;, &quot;888-84...
+$ Sex             &lt;fct&gt; Male, Male, Male, Female, Male, Male, Male, Male, M...
+$ Randomized_Date &lt;date&gt; 2017-10-16, 2017-10-27, 2017-11-24, 2017-10-11, 20...
+$ vig_min_day     &lt;dbl&gt; NA, NA, NA, NA, 30, 180, NA, NA, 200, NA, 10, 225, ...
+$ mod_min_day     &lt;dbl&gt; 720, 45, 175, 40, 150, 360, 60, 150, 125, 90, 180, ...
+$ vig_mod_min     &lt;dbl&gt; 720, 45, 175, 40, 180, 540, 60, 150, 325, 90, 190, ...
+$ activeMinutes   &lt;dbl&gt; 360, 153, 7, 68, 185, 388, 87, NA, 157, 295, 73, 41...</code></pre>
+</div>
+<div id="qualtricssurvey-collected" class="section level3">
+<h3>Qualtrics/Survey Collected</h3>
+<div id="month-2" class="section level4">
+<h4>6-Month</h4>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" title="1">sixmoAM &lt;-<span class="st"> </span>sixmo<span class="op">$</span>Physical_Activity <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb21-2" title="2"><span class="st">  </span><span class="kw">mutate</span>(</a>
+<a class="sourceLine" id="cb21-3" title="3">    <span class="dt">Vigorous_min =</span> <span class="kw">ifelse</span>(Vigorous_min <span class="op">==</span><span class="st"> </span><span class="dv">1440</span>,</a>
+<a class="sourceLine" id="cb21-4" title="4">                          <span class="ot">NA_integer_</span>, </a>
+<a class="sourceLine" id="cb21-5" title="5">                          Vigorous_min),</a>
+<a class="sourceLine" id="cb21-6" title="6">    <span class="dt">Moderate_Min =</span> <span class="kw">ifelse</span>(Moderate_Min <span class="op">==</span><span class="st"> </span><span class="dv">1440</span>, </a>
+<a class="sourceLine" id="cb21-7" title="7">                          <span class="ot">NA_integer_</span>, </a>
+<a class="sourceLine" id="cb21-8" title="8">                          Moderate_Min),</a>
+<a class="sourceLine" id="cb21-9" title="9">    <span class="dt">vig_min_day  =</span> <span class="kw">ifelse</span>(Vigorous_Activity <span class="op">!=</span><span class="st"> </span><span class="dv">0</span>,</a>
+<a class="sourceLine" id="cb21-10" title="10">                          Vigorous_min <span class="op">*</span><span class="st"> </span>Vigorous_Activity,</a>
+<a class="sourceLine" id="cb21-11" title="11">                          <span class="ot">NA_real_</span>),</a>
+<a class="sourceLine" id="cb21-12" title="12">    <span class="dt">mod_min_day  =</span> <span class="kw">ifelse</span>(Moderate_Activity <span class="op">!=</span><span class="st"> </span><span class="dv">0</span>,</a>
+<a class="sourceLine" id="cb21-13" title="13">                          Moderate_Min <span class="op">*</span><span class="st"> </span>Moderate_Activity,</a>
+<a class="sourceLine" id="cb21-14" title="14">                          <span class="ot">NA_real_</span>)</a>
+<a class="sourceLine" id="cb21-15" title="15">    ) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb21-16" title="16"><span class="st">  </span><span class="kw">mutate</span>(</a>
+<a class="sourceLine" id="cb21-17" title="17">    <span class="dt">vig_mod_min =</span> <span class="kw">rowSums</span>(.[<span class="kw">c</span>(<span class="st">&quot;vig_min_day&quot;</span>, <span class="st">&quot;mod_min_day&quot;</span>)], <span class="dt">na.rm =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb21-18" title="18">  ) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb21-19" title="19"><span class="st">  </span><span class="kw">select</span>(</a>
+<a class="sourceLine" id="cb21-20" title="20">    VibrentID,</a>
+<a class="sourceLine" id="cb21-21" title="21">    vig_min_day,</a>
+<a class="sourceLine" id="cb21-22" title="22">    mod_min_day,</a>
+<a class="sourceLine" id="cb21-23" title="23">    vig_mod_min</a>
+<a class="sourceLine" id="cb21-24" title="24">    )</a>
+<a class="sourceLine" id="cb21-25" title="25"></a>
+<a class="sourceLine" id="cb21-26" title="26"><span class="kw">head</span>(sixmoAM) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">tableStyle</span>()</a></code></pre></div>
+<table class="table table-striped table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+VibrentID
+</th>
+<th style="text-align:right;">
+vig_min_day
+</th>
+<th style="text-align:right;">
+mod_min_day
+</th>
+<th style="text-align:right;">
+vig_mod_min
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+222-492
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+30
+</td>
+<td style="text-align:right;">
+30
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+222-628
+</td>
+<td style="text-align:right;">
+72
+</td>
+<td style="text-align:right;">
+240
+</td>
+<td style="text-align:right;">
+312
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+225-393
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+60
+</td>
+<td style="text-align:right;">
+60
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+227-446
+</td>
+<td style="text-align:right;">
+120
+</td>
+<td style="text-align:right;">
+120
+</td>
+<td style="text-align:right;">
+240
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+232-293
+</td>
+<td style="text-align:right;">
+105
+</td>
+<td style="text-align:right;">
+40
+</td>
+<td style="text-align:right;">
+145
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+235-799
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+35
+</td>
+<td style="text-align:right;">
+35
+</td>
+</tr>
+</tbody>
+</table>
+<p>6-Month Active Minute Distributions</p>
+<p><img src="Stay-Strong-Main-Analyses_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
+<p>Attach all StayStrong Participants</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" title="1">sixmoAM &lt;-<span class="st"> </span>sixmoAM <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb22-2" title="2"><span class="st">  </span><span class="kw">right_join</span>(</a>
+<a class="sourceLine" id="cb22-3" title="3">    arms <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb22-4" title="4"><span class="st">      </span><span class="kw">select</span>(Program_Code),</a>
+<a class="sourceLine" id="cb22-5" title="5">    <span class="dt">by =</span> <span class="kw">c</span>(<span class="st">&quot;VibrentID&quot;</span> =<span class="st"> &quot;Program_Code&quot;</span>)</a>
+<a class="sourceLine" id="cb22-6" title="6">  )</a></code></pre></div>
+</div>
+<div id="month-3" class="section level4">
+<h4>12-Month</h4>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" title="1">twelvemoAM &lt;-<span class="st"> </span>twelvemo<span class="op">$</span>Physical_Activity <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb23-2" title="2"><span class="st">  </span><span class="kw">mutate</span>(</a>
+<a class="sourceLine" id="cb23-3" title="3">    <span class="dt">Vigorous_min =</span> <span class="kw">ifelse</span>(Vigorous_min <span class="op">==</span><span class="st"> </span><span class="dv">1440</span>,</a>
+<a class="sourceLine" id="cb23-4" title="4">                          <span class="ot">NA_integer_</span>, </a>
+<a class="sourceLine" id="cb23-5" title="5">                          Vigorous_min),</a>
+<a class="sourceLine" id="cb23-6" title="6">    <span class="dt">Moderate_Min =</span> <span class="kw">ifelse</span>(Moderate_Min <span class="op">==</span><span class="st"> </span><span class="dv">1440</span>, </a>
+<a class="sourceLine" id="cb23-7" title="7">                          <span class="ot">NA_integer_</span>, </a>
+<a class="sourceLine" id="cb23-8" title="8">                          Moderate_Min),</a>
+<a class="sourceLine" id="cb23-9" title="9">    <span class="dt">vig_min_day  =</span> <span class="kw">ifelse</span>(Vigorous_Activity <span class="op">!=</span><span class="st"> </span><span class="dv">0</span>,</a>
+<a class="sourceLine" id="cb23-10" title="10">                          Vigorous_min <span class="op">*</span><span class="st"> </span>Vigorous_Activity,</a>
+<a class="sourceLine" id="cb23-11" title="11">                          <span class="ot">NA_real_</span>),</a>
+<a class="sourceLine" id="cb23-12" title="12">    <span class="dt">mod_min_day  =</span> <span class="kw">ifelse</span>(Moderate_Activity <span class="op">!=</span><span class="st"> </span><span class="dv">0</span>,</a>
+<a class="sourceLine" id="cb23-13" title="13">                          Moderate_Min <span class="op">*</span><span class="st"> </span>Moderate_Activity,</a>
+<a class="sourceLine" id="cb23-14" title="14">                          <span class="ot">NA_real_</span>)</a>
+<a class="sourceLine" id="cb23-15" title="15">    ) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb23-16" title="16"><span class="st">  </span><span class="kw">mutate</span>(</a>
+<a class="sourceLine" id="cb23-17" title="17">    <span class="dt">vig_mod_min =</span> <span class="kw">rowSums</span>(.[<span class="kw">c</span>(<span class="st">&quot;vig_min_day&quot;</span>, <span class="st">&quot;mod_min_day&quot;</span>)], <span class="dt">na.rm =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb23-18" title="18">  ) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb23-19" title="19"><span class="st">  </span><span class="kw">select</span>(</a>
+<a class="sourceLine" id="cb23-20" title="20">    VibrentID,</a>
+<a class="sourceLine" id="cb23-21" title="21">    vig_min_day,</a>
+<a class="sourceLine" id="cb23-22" title="22">    mod_min_day,</a>
+<a class="sourceLine" id="cb23-23" title="23">    vig_mod_min</a>
+<a class="sourceLine" id="cb23-24" title="24">    )</a>
+<a class="sourceLine" id="cb23-25" title="25"></a>
+<a class="sourceLine" id="cb23-26" title="26"><span class="kw">head</span>(twelvemoAM) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">tableStyle</span>()</a></code></pre></div>
+<table class="table table-striped table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+VibrentID
+</th>
+<th style="text-align:right;">
+vig_min_day
+</th>
+<th style="text-align:right;">
+mod_min_day
+</th>
+<th style="text-align:right;">
+vig_mod_min
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+222-492
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+222-628
+</td>
+<td style="text-align:right;">
+120
+</td>
+<td style="text-align:right;">
+60
+</td>
+<td style="text-align:right;">
+180
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+227-446
+</td>
+<td style="text-align:right;">
+60
+</td>
+<td style="text-align:right;">
+240
+</td>
+<td style="text-align:right;">
+300
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+232-293
+</td>
+<td style="text-align:right;">
+120
+</td>
+<td style="text-align:right;">
+360
+</td>
+<td style="text-align:right;">
+480
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+236-294
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+15
+</td>
+<td style="text-align:right;">
+15
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+245-929
+</td>
+<td style="text-align:right;">
+20
+</td>
+<td style="text-align:right;">
+150
+</td>
+<td style="text-align:right;">
+170
+</td>
+</tr>
+</tbody>
+</table>
+<p>12-Month Active Minute Distributions</p>
+<p><img src="Stay-Strong-Main-Analyses_files/figure-html/unnamed-chunk-24-1.png" width="672" /></p>
+<p>Definitely going to require some cleaning in the tails.</p>
+<p>Attach all StayStrong Participants</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" title="1">twelvemoAM &lt;-<span class="st"> </span>twelvemoAM <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb24-2" title="2"><span class="st">  </span><span class="kw">right_join</span>(</a>
+<a class="sourceLine" id="cb24-3" title="3">    arms <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb24-4" title="4"><span class="st">      </span><span class="kw">select</span>(Program_Code),</a>
+<a class="sourceLine" id="cb24-5" title="5">    <span class="dt">by =</span> <span class="kw">c</span>(<span class="st">&quot;VibrentID&quot;</span> =<span class="st"> &quot;Program_Code&quot;</span>)</a>
+<a class="sourceLine" id="cb24-6" title="6">  )</a></code></pre></div>
+</div>
+</div>
+<div id="vibrent-collected" class="section level3">
+<h3>Vibrent Collected</h3>
+<p>Need to aggregate each type of active minute by week for each person.</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" title="1"><span class="co"># takes a minute</span></a>
+<a class="sourceLine" id="cb25-2" title="2">vibrentAM &lt;-<span class="st"> </span>vibrentAM <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb25-3" title="3"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">meas_week =</span> lubridate<span class="op">::</span><span class="kw">floor_date</span>(measurement_date, <span class="dt">unit =</span> <span class="st">&quot;week&quot;</span>)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb25-4" title="4"><span class="st">  </span><span class="kw">group_by</span>(program_code, meas_week) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb25-5" title="5"><span class="st">  </span><span class="kw">summarize</span>(</a>
+<a class="sourceLine" id="cb25-6" title="6">    <span class="dt">VAM =</span> <span class="kw">sum</span>(very_active_minutes,    <span class="dt">na.rm =</span> <span class="ot">TRUE</span>),</a>
+<a class="sourceLine" id="cb25-7" title="7">    <span class="dt">FAM =</span> <span class="kw">sum</span>(fairly_active_minutes,  <span class="dt">na.rm =</span> <span class="ot">TRUE</span>),</a>
+<a class="sourceLine" id="cb25-8" title="8">    <span class="dt">LAM =</span> <span class="kw">sum</span>(lightly_active_minutes, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb25-9" title="9">  ) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb25-10" title="10"><span class="st">  </span><span class="kw">ungroup</span>() <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb25-11" title="11"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">activeMinutes =</span> <span class="kw">rowSums</span>(.[<span class="kw">c</span>(<span class="st">&quot;VAM&quot;</span>, <span class="st">&quot;FAM&quot;</span>)], <span class="dt">na.rm =</span> <span class="ot">TRUE</span>))</a>
+<a class="sourceLine" id="cb25-12" title="12"></a>
+<a class="sourceLine" id="cb25-13" title="13">vibrentAM <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">head</span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">tableStyle</span>()</a></code></pre></div>
+<table class="table table-striped table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+program_code
+</th>
+<th style="text-align:left;">
+meas_week
+</th>
+<th style="text-align:right;">
+VAM
+</th>
+<th style="text-align:right;">
+FAM
+</th>
+<th style="text-align:right;">
+LAM
+</th>
+<th style="text-align:right;">
+activeMinutes
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+222-492
+</td>
+<td style="text-align:left;">
+2017-12-31
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+42
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+222-492
+</td>
+<td style="text-align:left;">
+2018-01-07
+</td>
+<td style="text-align:right;">
+62
+</td>
+<td style="text-align:right;">
+7
+</td>
+<td style="text-align:right;">
+677
+</td>
+<td style="text-align:right;">
+69
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+222-492
+</td>
+<td style="text-align:left;">
+2018-01-14
+</td>
+<td style="text-align:right;">
+77
+</td>
+<td style="text-align:right;">
+18
+</td>
+<td style="text-align:right;">
+793
+</td>
+<td style="text-align:right;">
+95
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+222-492
+</td>
+<td style="text-align:left;">
+2018-01-21
+</td>
+<td style="text-align:right;">
+47
+</td>
+<td style="text-align:right;">
+60
+</td>
+<td style="text-align:right;">
+638
+</td>
+<td style="text-align:right;">
+107
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+222-492
+</td>
+<td style="text-align:left;">
+2018-01-28
+</td>
+<td style="text-align:right;">
+33
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+741
+</td>
+<td style="text-align:right;">
+34
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+222-492
+</td>
+<td style="text-align:left;">
+2018-02-04
+</td>
+<td style="text-align:right;">
+16
+</td>
+<td style="text-align:right;">
+14
+</td>
+<td style="text-align:right;">
+715
+</td>
+<td style="text-align:right;">
+30
+</td>
+</tr>
+</tbody>
+</table>
+<p><img src="Stay-Strong-Main-Analyses_files/figure-html/unnamed-chunk-27-1.png" width="672" /></p>
+<p>In order to determine 6 months and 12 months from baseline/randomization date, surprise! we need the randomization date from the baseline data.</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" title="1">vibrentAM &lt;-<span class="st"> </span>baseline <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb26-2" title="2"><span class="st">  </span><span class="kw">select</span>(VibrentID, Randomized_Date) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb26-3" title="3"><span class="st">  </span><span class="kw">left_join</span>(vibrentAM, <span class="dt">by =</span> <span class="kw">c</span>(<span class="st">&quot;VibrentID&quot;</span> =<span class="st"> &quot;program_code&quot;</span>)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb26-4" title="4"><span class="st">  </span><span class="kw">left_join</span>(arms <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb26-5" title="5"><span class="st">              </span><span class="kw">select</span>(Program_Code, arm), </a>
+<a class="sourceLine" id="cb26-6" title="6">            <span class="dt">by =</span> <span class="kw">c</span>(<span class="st">&quot;VibrentID&quot;</span> =<span class="st"> &quot;Program_Code&quot;</span>))</a></code></pre></div>
+<p>The decision, aside from the 6 (12)-month “week”, is to choose the week closest to 182 (365) that <strong>has</strong> active minute data (within a +/- 30 day window). Computationally, that implies removing all “0” active minute weeks first and then running our collection algorithm.</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" title="1"><span class="kw">source</span>(<span class="st">&#39;functions/MeasureWindows.R&#39;</span>)</a>
+<a class="sourceLine" id="cb27-2" title="2"></a>
+<a class="sourceLine" id="cb27-3" title="3">vib &lt;-<span class="st"> </span><span class="kw">windows.f</span>(vibrentAM,</a>
+<a class="sourceLine" id="cb27-4" title="4">                 <span class="dt">id =</span> <span class="st">&quot;VibrentID&quot;</span>,</a>
+<a class="sourceLine" id="cb27-5" title="5">                 <span class="dt">measures =</span> <span class="st">&quot;activeMinutes&quot;</span>,</a>
+<a class="sourceLine" id="cb27-6" title="6">                 <span class="dt">tmeasures =</span> <span class="st">&quot;meas_week&quot;</span>,</a>
+<a class="sourceLine" id="cb27-7" title="7">                 <span class="dt">startPoint =</span> <span class="st">&quot;Randomized_Date&quot;</span>,</a>
+<a class="sourceLine" id="cb27-8" title="8">                 <span class="dt">t =</span> <span class="kw">c</span>(<span class="dv">182</span>, <span class="dv">365</span>),</a>
+<a class="sourceLine" id="cb27-9" title="9">                 <span class="dt">windows =</span> <span class="kw">c</span>(<span class="dv">30</span>, <span class="dv">30</span>))</a>
+<a class="sourceLine" id="cb27-10" title="10"></a>
+<a class="sourceLine" id="cb27-11" title="11">vib <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb27-12" title="12"><span class="st">  </span><span class="kw">ggplot</span>() <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb27-13" title="13"><span class="st">  </span><span class="kw">add</span>(<span class="kw">geom_density</span>(<span class="kw">aes</span>(<span class="dt">x =</span> activeMinutes,</a>
+<a class="sourceLine" id="cb27-14" title="14">                       <span class="dt">group =</span> measureTime,</a>
+<a class="sourceLine" id="cb27-15" title="15">                       <span class="dt">fill =</span> measureTime),</a>
+<a class="sourceLine" id="cb27-16" title="16">                   <span class="dt">alpha =</span> <span class="fl">0.3</span>)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb27-17" title="17"><span class="st">  </span><span class="kw">add</span>(<span class="kw">theme</span>(<span class="dt">legend.position =</span> <span class="kw">c</span>(<span class="fl">0.8</span>, <span class="fl">0.8</span>))) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb27-18" title="18"><span class="st">  </span><span class="kw">add</span>(<span class="kw">scale_fill_brewer</span>(<span class="dt">palette =</span> <span class="st">&quot;Set1&quot;</span>)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb27-19" title="19"><span class="st">  </span><span class="kw">add</span>(<span class="kw">labs</span>(</a>
+<a class="sourceLine" id="cb27-20" title="20">    <span class="dt">x =</span> <span class="st">&quot;Active Minutes = Fairly Active Minutes + Very Active Minutes&quot;</span>,</a>
+<a class="sourceLine" id="cb27-21" title="21">    <span class="dt">y =</span> <span class="st">&quot;Density&quot;</span>,</a>
+<a class="sourceLine" id="cb27-22" title="22">    <span class="dt">fill =</span> <span class="st">&quot;Follow-Up Time&quot;</span></a>
+<a class="sourceLine" id="cb27-23" title="23">  ))</a></code></pre></div>
+<p><img src="Stay-Strong-Main-Analyses_files/figure-html/unnamed-chunk-29-1.png" width="672" /></p>
+<p>I am interested in knowing the distribution of “timing” around our 30 day window choice, the median should be around 182 and 365 …</p>
+<p><img src="Stay-Strong-Main-Analyses_files/figure-html/unnamed-chunk-30-1.png" width="672" /></p>
+</div>
+</div>
+<div id="combine-vibrent-am-and-survey-am" class="section level2">
+<h2>Combine Vibrent AM and Survey AM</h2>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" title="1">FOL &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Follow-Up Incomplete&quot;</span>, <span class="st">&quot;Follow-Up Complete&quot;</span>)</a>
+<a class="sourceLine" id="cb28-2" title="2">SS  &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Outcome Incomplete&quot;</span>, <span class="st">&quot;Outcome Complete&quot;</span>)</a>
+<a class="sourceLine" id="cb28-3" title="3"></a>
+<a class="sourceLine" id="cb28-4" title="4">comb &lt;-<span class="st"> </span>vib <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb28-5" title="5"><span class="st">  </span><span class="kw">select</span>(<span class="op">-</span>Randomized_Date, <span class="op">-</span>meas_week, <span class="op">-</span>arm) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb28-6" title="6"><span class="st">  </span><span class="kw">mutate</span>(</a>
+<a class="sourceLine" id="cb28-7" title="7">    <span class="dt">measureTime =</span> <span class="kw">ifelse</span>(measureTime <span class="op">==</span><span class="st"> &quot;t_182&quot;</span>, <span class="st">&quot;6 mos.&quot;</span>, <span class="st">&quot;12 mos.&quot;</span>),</a>
+<a class="sourceLine" id="cb28-8" title="8">    <span class="dt">activeMinutes =</span> <span class="kw">ifelse</span>(activeMinutes <span class="op">==</span><span class="st"> </span><span class="dv">0</span>, <span class="dv">5</span>, activeMinutes)</a>
+<a class="sourceLine" id="cb28-9" title="9">  ) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb28-10" title="10"><span class="st">  </span><span class="kw">full_join</span>(</a>
+<a class="sourceLine" id="cb28-11" title="11">    <span class="kw">bind_rows</span>(</a>
+<a class="sourceLine" id="cb28-12" title="12">      <span class="st">&quot;6 mos.&quot;</span> =<span class="st"> </span>sixmoAM,</a>
+<a class="sourceLine" id="cb28-13" title="13">      <span class="st">&quot;12 mos.&quot;</span> =<span class="st"> </span>twelvemoAM,</a>
+<a class="sourceLine" id="cb28-14" title="14">      <span class="dt">.id =</span> <span class="st">&quot;measureTime&quot;</span></a>
+<a class="sourceLine" id="cb28-15" title="15">    ),</a>
+<a class="sourceLine" id="cb28-16" title="16">    <span class="dt">by =</span> <span class="kw">c</span>(<span class="st">&quot;VibrentID&quot;</span>, <span class="st">&quot;measureTime&quot;</span>)</a>
+<a class="sourceLine" id="cb28-17" title="17">  ) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb28-18" title="18"><span class="st">  </span><span class="kw">select</span>(<span class="op">-</span><span class="kw">c</span>(VAM<span class="op">:</span>LAM), <span class="op">-</span>time) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb28-19" title="19"><span class="st">  </span><span class="kw">bind_rows</span>(</a>
+<a class="sourceLine" id="cb28-20" title="20">    baseline <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb28-21" title="21"><span class="st">      </span><span class="kw">select</span>(<span class="op">-</span>Sex, <span class="op">-</span>Randomized_Date) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb28-22" title="22"><span class="st">      </span><span class="kw">mutate</span>(<span class="dt">measureTime =</span> <span class="st">&quot;Baseline&quot;</span>)</a>
+<a class="sourceLine" id="cb28-23" title="23">  ) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb28-24" title="24"><span class="st">  </span><span class="kw">mutate</span>(</a>
+<a class="sourceLine" id="cb28-25" title="25">    <span class="dt">measureTime =</span> <span class="kw">factor</span>(measureTime,</a>
+<a class="sourceLine" id="cb28-26" title="26">                         <span class="dt">levels =</span> <span class="kw">c</span>(<span class="st">&quot;Baseline&quot;</span>, <span class="st">&quot;6 mos.&quot;</span>, <span class="st">&quot;12 mos.&quot;</span>),</a>
+<a class="sourceLine" id="cb28-27" title="27">                         <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;Baseline&quot;</span>, <span class="st">&quot;6 mos.&quot;</span>, <span class="st">&quot;12 mos.&quot;</span>))</a>
+<a class="sourceLine" id="cb28-28" title="28">  ) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb28-29" title="29"><span class="st">  </span><span class="kw">left_join</span>(</a>
+<a class="sourceLine" id="cb28-30" title="30">    arms <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb28-31" title="31"><span class="st">      </span><span class="kw">select</span>(Program_Code, arm),</a>
+<a class="sourceLine" id="cb28-32" title="32">    <span class="dt">by =</span> <span class="kw">c</span>(<span class="st">&quot;VibrentID&quot;</span> =<span class="st"> &quot;Program_Code&quot;</span>)</a>
+<a class="sourceLine" id="cb28-33" title="33">  ) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb28-34" title="34"><span class="st">  </span><span class="kw">select</span>(<span class="op">-</span>vig_min_day, <span class="op">-</span>mod_min_day) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb28-35" title="35"><span class="st">  </span><span class="kw">mutate</span>(</a>
+<a class="sourceLine" id="cb28-36" title="36">    <span class="dt">FOL_complete =</span> <span class="kw">ifelse</span>(<span class="op">!</span><span class="kw">is.na</span>(activeMinutes) <span class="op">|</span><span class="st"> </span><span class="op">!</span><span class="kw">is.na</span>(vig_mod_min), <span class="dv">1</span>, <span class="dv">0</span>),</a>
+<a class="sourceLine" id="cb28-37" title="37">    <span class="dt">FOL_complete =</span> <span class="kw">ifelse</span>(measureTime <span class="op">==</span><span class="st"> &quot;Baseline&quot;</span>, <span class="ot">NA</span>, FOL_complete),</a>
+<a class="sourceLine" id="cb28-38" title="38">    <span class="dt">FOL_complete =</span> <span class="kw">factor</span>(FOL_complete, <span class="dv">0</span><span class="op">:</span><span class="dv">1</span>, FOL),</a>
+<a class="sourceLine" id="cb28-39" title="39">    <span class="dt">SS_complete  =</span> <span class="kw">ifelse</span>(<span class="op">!</span><span class="kw">is.na</span>(activeMinutes), <span class="dv">1</span>, <span class="dv">0</span>),</a>
+<a class="sourceLine" id="cb28-40" title="40">    <span class="dt">SS_complete  =</span> <span class="kw">ifelse</span>(measureTime <span class="op">==</span><span class="st"> &quot;Baseline&quot;</span>, <span class="ot">NA</span>, SS_complete),</a>
+<a class="sourceLine" id="cb28-41" title="41">    <span class="dt">SS_complete  =</span> <span class="kw">factor</span>(SS_complete, <span class="dv">0</span><span class="op">:</span><span class="dv">1</span>, SS)</a>
+<a class="sourceLine" id="cb28-42" title="42">  )</a></code></pre></div>
+<p>By Follow-up Completion (Determined by either 6(12)-month survey completion or collection of 6(12)-month active minutes)</p>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb29-1" title="1">comb <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb29-2" title="2"><span class="st">  </span><span class="kw">tabyl</span>(FOL_complete, arm, measureTime) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb29-3" title="3"><span class="st">  </span><span class="kw">adorn_totals</span>(<span class="st">&quot;col&quot;</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb29-4" title="4"><span class="st">  </span><span class="kw">adorn_percentages</span>(<span class="st">&quot;all&quot;</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb29-5" title="5"><span class="st">  </span><span class="kw">adorn_pct_formatting</span>(<span class="dt">digits =</span> <span class="dv">1</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb29-6" title="6"><span class="st">  </span><span class="kw">adorn_ns</span>()</a></code></pre></div>
+<pre><code>$Baseline
+         FOL_complete     CONTROL INTERVENTION        Total
+ Follow-Up Incomplete  0.0%   (0)   0.0%   (0)   0.0%   (0)
+   Follow-Up Complete  0.0%   (0)   0.0%   (0)   0.0%   (0)
+                 &lt;NA&gt; 50.1% (179)  49.9% (178) 100.0% (357)
+
+$`6 mos.`
+         FOL_complete     CONTROL INTERVENTION       Total
+ Follow-Up Incomplete 14.6%  (52)  11.8%  (42) 26.3%  (94)
+   Follow-Up Complete 35.6% (127)  38.1% (136) 73.7% (263)
+
+$`12 mos.`
+         FOL_complete    CONTROL INTERVENTION       Total
+ Follow-Up Incomplete 24.4% (87)  19.0%  (68) 43.4% (155)
+   Follow-Up Complete 25.8% (92)  30.8% (110) 56.6% (202)</code></pre>
+<p>By Outcome Completion (Determined by collection of 6(12)-month active minutes)</p>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb31-1" title="1">comb <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb31-2" title="2"><span class="st">  </span><span class="kw">tabyl</span>(SS_complete, arm, measureTime) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb31-3" title="3"><span class="st">  </span><span class="kw">adorn_totals</span>(<span class="st">&quot;col&quot;</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb31-4" title="4"><span class="st">  </span><span class="kw">adorn_percentages</span>(<span class="st">&quot;all&quot;</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb31-5" title="5"><span class="st">  </span><span class="kw">adorn_pct_formatting</span>(<span class="dt">digits =</span> <span class="dv">1</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb31-6" title="6"><span class="st">  </span><span class="kw">adorn_ns</span>()</a></code></pre></div>
+<pre><code>$Baseline
+        SS_complete     CONTROL INTERVENTION        Total
+ Outcome Incomplete  0.0%   (0)   0.0%   (0)   0.0%   (0)
+   Outcome Complete  0.0%   (0)   0.0%   (0)   0.0%   (0)
+               &lt;NA&gt; 50.1% (179)  49.9% (178) 100.0% (357)
+
+$`6 mos.`
+        SS_complete     CONTROL INTERVENTION       Total
+ Outcome Incomplete 19.9%  (71)  15.7%  (56) 35.6% (127)
+   Outcome Complete 30.3% (108)  34.2% (122) 64.4% (230)
+
+$`12 mos.`
+        SS_complete     CONTROL INTERVENTION       Total
+ Outcome Incomplete 33.6% (120)  30.8% (110) 64.4% (230)
+   Outcome Complete 16.5%  (59)  19.0%  (68) 35.6% (127)</code></pre>
+</div>
+<div id="steps" class="section level2">
+<h2>Steps</h2>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb33-1" title="1">steps &lt;-<span class="st"> </span>vibrent <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb33-2" title="2"><span class="st">  </span><span class="co"># remove testing accounts</span></a>
+<a class="sourceLine" id="cb33-3" title="3"><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span><span class="kw">grepl</span>(<span class="st">&quot;[A-Za-z]&quot;</span>, program_code)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb33-4" title="4"><span class="st">  </span><span class="kw">select</span>(</a>
+<a class="sourceLine" id="cb33-5" title="5">    program_code,</a>
+<a class="sourceLine" id="cb33-6" title="6">    measurement_date,</a>
+<a class="sourceLine" id="cb33-7" title="7">    steps</a>
+<a class="sourceLine" id="cb33-8" title="8">  ) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb33-9" title="9"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">measurement_date =</span> <span class="kw">as.Date</span>(measurement_date, <span class="st">&quot;%m-%d-%Y&quot;</span>)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb33-10" title="10"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">steps =</span> <span class="kw">as.numeric</span>(<span class="kw">gsub</span>(<span class="st">&quot;,&quot;</span>, <span class="st">&quot;&quot;</span>, steps))) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb33-11" title="11"><span class="st">  </span><span class="kw">distinct</span>()</a></code></pre></div>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb34-1" title="1">dt &lt;-<span class="st"> </span>data.table<span class="op">::</span><span class="kw">as.data.table</span>(steps)</a>
+<a class="sourceLine" id="cb34-2" title="2">data.table<span class="op">::</span><span class="kw">setkey</span>(dt, program_code, measurement_date)</a>
+<a class="sourceLine" id="cb34-3" title="3">dt &lt;-<span class="st"> </span>dt[<span class="kw">duplicated</span>(dt, <span class="dt">by =</span> data.table<span class="op">::</span><span class="kw">key</span>(dt))]</a>
+<a class="sourceLine" id="cb34-4" title="4"></a>
+<a class="sourceLine" id="cb34-5" title="5"><span class="kw">dim</span>(dt)</a></code></pre></div>
+<pre><code>[1] 222   3</code></pre>
+<p>222 duplicate records (444 items to reconcile). We will take the last row for duplicated measurements as the actual values on that day, since they are usually just updated values. For example,</p>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb36-1" title="1">steps &lt;-<span class="st"> </span>steps <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb36-2" title="2"><span class="st">  </span><span class="kw">left_join</span>(dt <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb36-3" title="3"><span class="st">              </span><span class="kw">mutate</span>(<span class="dt">dup =</span> <span class="dv">1</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb36-4" title="4"><span class="st">              </span><span class="kw">select</span>(program_code, measurement_date, dup),</a>
+<a class="sourceLine" id="cb36-5" title="5">            <span class="dt">by =</span> <span class="kw">c</span>(<span class="st">&quot;program_code&quot;</span>, <span class="st">&quot;measurement_date&quot;</span>)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb36-6" title="6"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">dup =</span> <span class="kw">ifelse</span>(<span class="kw">is.na</span>(dup), <span class="dv">0</span>, dup)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb36-7" title="7"><span class="st">  </span><span class="kw">group_by</span>(program_code, measurement_date) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb36-8" title="8"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">cnt =</span> <span class="kw">row_number</span>()) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb36-9" title="9"><span class="st">  </span><span class="kw">ungroup</span>() <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb36-10" title="10"><span class="st">  </span><span class="kw">filter</span>((dup <span class="op">==</span><span class="st"> </span><span class="dv">0</span> <span class="op">&amp;</span><span class="st"> </span>cnt <span class="op">==</span><span class="st"> </span><span class="dv">1</span>) <span class="op">|</span><span class="st"> </span>(dup <span class="op">==</span><span class="st"> </span><span class="dv">1</span> <span class="op">&amp;</span><span class="st"> </span>cnt <span class="op">==</span><span class="st"> </span><span class="dv">2</span>)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb36-11" title="11"><span class="st">  </span><span class="kw">select</span>(<span class="op">-</span>dup, <span class="op">-</span>cnt)</a>
+<a class="sourceLine" id="cb36-12" title="12"></a>
+<a class="sourceLine" id="cb36-13" title="13"><span class="kw">rm</span>(dt)</a></code></pre></div>
+<p>Attach “Arm” and Reduce to <strong>only</strong> those at Baseline,</p>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb37-1" title="1">steps &lt;-<span class="st"> </span>arms <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb37-2" title="2"><span class="st">  </span><span class="kw">rename</span>(<span class="dt">program_code =</span> Program_Code) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb37-3" title="3"><span class="st">  </span><span class="kw">select</span>(program_code, arm) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb37-4" title="4"><span class="st">  </span><span class="kw">left_join</span>(steps, <span class="dt">by =</span> <span class="st">&quot;program_code&quot;</span>)</a></code></pre></div>
+<p>Need to aggregate steps by week for each person.</p>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb38-1" title="1">steps &lt;-<span class="st"> </span>steps <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb38-2" title="2"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">meas_week =</span> lubridate<span class="op">::</span><span class="kw">floor_date</span>(measurement_date, <span class="dt">unit =</span> <span class="st">&quot;week&quot;</span>)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb38-3" title="3"><span class="st">  </span><span class="kw">group_by</span>(program_code, meas_week) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb38-4" title="4"><span class="st">  </span><span class="kw">summarize</span>(</a>
+<a class="sourceLine" id="cb38-5" title="5">    <span class="dt">sum_steps =</span> <span class="kw">sum</span>(steps, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>),</a>
+<a class="sourceLine" id="cb38-6" title="6">    <span class="dt">mean_steps =</span> <span class="kw">mean</span>(steps, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb38-7" title="7">  ) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb38-8" title="8"><span class="st">  </span><span class="kw">ungroup</span>()</a>
+<a class="sourceLine" id="cb38-9" title="9"></a>
+<a class="sourceLine" id="cb38-10" title="10">steps <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">head</span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">tableStyle</span>()</a></code></pre></div>
+<table class="table table-striped table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+program_code
+</th>
+<th style="text-align:left;">
+meas_week
+</th>
+<th style="text-align:right;">
+sum_steps
+</th>
+<th style="text-align:right;">
+mean_steps
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+222-492
+</td>
+<td style="text-align:left;">
+2017-12-31
+</td>
+<td style="text-align:right;">
+593
+</td>
+<td style="text-align:right;">
+593.000
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+222-492
+</td>
+<td style="text-align:left;">
+2018-01-07
+</td>
+<td style="text-align:right;">
+20268
+</td>
+<td style="text-align:right;">
+2895.429
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+222-492
+</td>
+<td style="text-align:left;">
+2018-01-14
+</td>
+<td style="text-align:right;">
+24672
+</td>
+<td style="text-align:right;">
+3524.571
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+222-492
+</td>
+<td style="text-align:left;">
+2018-01-21
+</td>
+<td style="text-align:right;">
+20509
+</td>
+<td style="text-align:right;">
+2929.857
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+222-492
+</td>
+<td style="text-align:left;">
+2018-01-28
+</td>
+<td style="text-align:right;">
+16542
+</td>
+<td style="text-align:right;">
+2363.143
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+222-492
+</td>
+<td style="text-align:left;">
+2018-02-04
+</td>
+<td style="text-align:right;">
+21126
+</td>
+<td style="text-align:right;">
+3018.000
+</td>
+</tr>
+</tbody>
+</table>
+<p><img src="Stay-Strong-Main-Analyses_files/figure-html/unnamed-chunk-39-1.png" width="672" /></p>
+<p>Looks like we’ve got some zero-inflation</p>
+<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb39-1" title="1">steps <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb39-2" title="2"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">step0 =</span> <span class="kw">ifelse</span>(sum_steps <span class="op">==</span><span class="st"> </span><span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb39-3" title="3"><span class="st">  </span><span class="kw">tabyl</span>(step0) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb39-4" title="4"><span class="st">  </span><span class="kw">adorn_pct_formatting</span>()</a></code></pre></div>
+<pre><code> step0     n percent
+     0 11921   90.3%
+     1  1283    9.7%</code></pre>
+<p>about 10% of the sample is zeroes.</p>
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb41-1" title="1">steps &lt;-<span class="st"> </span>baseline <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb41-2" title="2"><span class="st">  </span><span class="kw">select</span>(VibrentID, Randomized_Date) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb41-3" title="3"><span class="st">  </span><span class="kw">left_join</span>(steps, <span class="dt">by =</span> <span class="kw">c</span>(<span class="st">&quot;VibrentID&quot;</span> =<span class="st"> &quot;program_code&quot;</span>)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb41-4" title="4"><span class="st">  </span><span class="kw">left_join</span>(arms <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb41-5" title="5"><span class="st">              </span><span class="kw">select</span>(Program_Code, arm), </a>
+<a class="sourceLine" id="cb41-6" title="6">            <span class="dt">by =</span> <span class="kw">c</span>(<span class="st">&quot;VibrentID&quot;</span> =<span class="st"> &quot;Program_Code&quot;</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb42-1" title="1">steps.tp &lt;-<span class="st"> </span><span class="kw">windows.f</span>(steps,</a>
+<a class="sourceLine" id="cb42-2" title="2">                      <span class="dt">id =</span> <span class="st">&quot;VibrentID&quot;</span>,</a>
+<a class="sourceLine" id="cb42-3" title="3">                      <span class="dt">measures =</span> <span class="st">&quot;sum_steps&quot;</span>,</a>
+<a class="sourceLine" id="cb42-4" title="4">                      <span class="dt">tmeasures =</span> <span class="st">&quot;meas_week&quot;</span>,</a>
+<a class="sourceLine" id="cb42-5" title="5">                      <span class="dt">startPoint =</span> <span class="st">&quot;Randomized_Date&quot;</span>,</a>
+<a class="sourceLine" id="cb42-6" title="6">                      <span class="dt">t =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">182</span>, <span class="dv">365</span>),</a>
+<a class="sourceLine" id="cb42-7" title="7">                      <span class="dt">windows =</span> <span class="kw">c</span>(<span class="dv">30</span>, <span class="dv">30</span>, <span class="dv">30</span>))</a>
+<a class="sourceLine" id="cb42-8" title="8"></a>
+<a class="sourceLine" id="cb42-9" title="9">steps.tp <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb42-10" title="10"><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> sum_steps, <span class="dt">y =</span> measureTime)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb42-11" title="11"><span class="st">  </span><span class="kw">add</span>(ggridges<span class="op">::</span><span class="kw">stat_density_ridges</span>(<span class="dt">quantile_lines =</span> <span class="ot">TRUE</span>)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb42-12" title="12"><span class="st">  </span><span class="kw">add</span>(<span class="kw">theme_trueMinimal</span>(<span class="dv">16</span>)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb42-13" title="13"><span class="st">  </span><span class="kw">add</span>(<span class="kw">theme</span>(<span class="dt">legend.position =</span> <span class="kw">c</span>(<span class="fl">0.8</span>, <span class="fl">0.8</span>))) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb42-14" title="14"><span class="st">  </span><span class="kw">add</span>(<span class="kw">scale_fill_brewer</span>(<span class="dt">palette =</span> <span class="st">&quot;Set1&quot;</span>)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb42-15" title="15"><span class="st">  </span><span class="kw">add</span>(<span class="kw">labs</span>(</a>
+<a class="sourceLine" id="cb42-16" title="16">    <span class="dt">x =</span> <span class="st">&quot;sum(steps in closest week)&quot;</span>,</a>
+<a class="sourceLine" id="cb42-17" title="17">    <span class="dt">y =</span> <span class="st">&quot;Follow-Up Time&quot;</span></a>
+<a class="sourceLine" id="cb42-18" title="18">  ))</a></code></pre></div>
+<p><img src="Stay-Strong-Main-Analyses_files/figure-html/unnamed-chunk-42-1.png" width="672" /></p>
+<p>Combine with <code>comb</code>/active minute data</p>
+<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb43-1" title="1">comb &lt;-<span class="st"> </span>comb <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb43-2" title="2"><span class="st">  </span><span class="kw">left_join</span>(</a>
+<a class="sourceLine" id="cb43-3" title="3">    steps.tp <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb43-4" title="4"><span class="st">      </span><span class="kw">select</span>(VibrentID, sum_steps<span class="op">:</span>mean_steps, measureTime) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb43-5" title="5"><span class="st">      </span><span class="kw">mutate</span>(<span class="dt">measureTime =</span> <span class="kw">factor</span>(measureTime,</a>
+<a class="sourceLine" id="cb43-6" title="6">                                  <span class="kw">c</span>(<span class="st">&quot;t_0&quot;</span>, <span class="st">&quot;t_182&quot;</span>, <span class="st">&quot;t_365&quot;</span>),</a>
+<a class="sourceLine" id="cb43-7" title="7">                                  <span class="kw">c</span>(<span class="st">&quot;Baseline&quot;</span>, <span class="st">&quot;6 mos.&quot;</span>, <span class="st">&quot;12 mos.&quot;</span>))),</a>
+<a class="sourceLine" id="cb43-8" title="8">    <span class="dt">by =</span> <span class="kw">c</span>(<span class="st">&quot;VibrentID&quot;</span>, <span class="st">&quot;measureTime&quot;</span>)</a>
+<a class="sourceLine" id="cb43-9" title="9">  )</a></code></pre></div>
+<p>Load in a few more pieces of data;</p>
+<p>Baseline Database:</p>
+<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb44-1" title="1">drive   &lt;-<span class="st"> &quot;I:/&quot;</span></a>
+<a class="sourceLine" id="cb44-2" title="2">subdir1 &lt;-<span class="st"> &quot;StayStrong&quot;</span></a>
+<a class="sourceLine" id="cb44-3" title="3">subdir2 &lt;-<span class="st"> &quot;8. Quantitative Analysis&quot;</span></a>
+<a class="sourceLine" id="cb44-4" title="4">subdir3 &lt;-<span class="st"> &quot;Programs&quot;</span></a>
+<a class="sourceLine" id="cb44-5" title="5">subdir4 &lt;-<span class="st"> &quot;StayStrongDB&quot;</span></a>
+<a class="sourceLine" id="cb44-6" title="6">subdir5 &lt;-<span class="st"> &quot;Data&quot;</span></a>
+<a class="sourceLine" id="cb44-7" title="7">file &lt;-<span class="st"> &quot;StayStrongDB.rds&quot;</span></a>
+<a class="sourceLine" id="cb44-8" title="8">path &lt;-<span class="st"> </span><span class="kw">paste</span>(drive, subdir1, subdir2, subdir3, subdir4, subdir5, file, </a>
+<a class="sourceLine" id="cb44-9" title="9">              <span class="dt">sep =</span> <span class="st">&quot;/&quot;</span>)</a>
+<a class="sourceLine" id="cb44-10" title="10">SSDB &lt;-<span class="st"> </span><span class="kw">readRDS</span>(path)</a></code></pre></div>
+<p>Baseline activity level</p>
+<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb45-1" title="1">subdir4 &lt;-<span class="st"> &quot;Outcomes&quot;</span></a>
+<a class="sourceLine" id="cb45-2" title="2">subdir5 &lt;-<span class="st"> &quot;Data&quot;</span></a>
+<a class="sourceLine" id="cb45-3" title="3">file &lt;-<span class="st"> &quot;BaselineGoal.csv&quot;</span></a>
+<a class="sourceLine" id="cb45-4" title="4">path &lt;-<span class="st"> </span><span class="kw">paste</span>(drive, subdir1, subdir2, subdir3, subdir4, subdir5, file,</a>
+<a class="sourceLine" id="cb45-5" title="5">              <span class="dt">sep =</span> <span class="st">&quot;/&quot;</span>)</a>
+<a class="sourceLine" id="cb45-6" title="6"></a>
+<a class="sourceLine" id="cb45-7" title="7">sqlGoal &lt;-<span class="st"> </span><span class="kw">read.csv</span>(path) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb45-8" title="8"><span class="st">  </span>janitor<span class="op">::</span><span class="kw">clean_names</span>() <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb45-9" title="9"><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span><span class="kw">is.na</span>(baseline_goal) <span class="op">&amp;</span><span class="st"> </span><span class="op">!</span><span class="kw">grepl</span>(<span class="st">&quot;UAT&quot;</span>, i_vibrent_id)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb45-10" title="10"><span class="st">  </span><span class="kw">rename</span>(<span class="dt">VibrentID =</span> i_vibrent_id)</a></code></pre></div>
+</div>
+<div id="more-processing" class="section level2">
+<h2>More Processing …</h2>
+<p>Need to collect sex, operating system and baseline activity level.</p>
+<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb46-1" title="1">SSout &lt;-<span class="st"> </span>comb <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb46-2" title="2"><span class="st">  </span><span class="kw">left_join</span>(</a>
+<a class="sourceLine" id="cb46-3" title="3">    SSDB<span class="op">$</span>baseline<span class="op">$</span>Demographics <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb46-4" title="4"><span class="st">      </span><span class="kw">select</span>(VibrentID, Sex),</a>
+<a class="sourceLine" id="cb46-5" title="5">    <span class="dt">by =</span> <span class="st">&quot;VibrentID&quot;</span></a>
+<a class="sourceLine" id="cb46-6" title="6">  ) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb46-7" title="7"><span class="st">  </span><span class="kw">left_join</span>(</a>
+<a class="sourceLine" id="cb46-8" title="8">    SSDB<span class="op">$</span>baseline<span class="op">$</span>Technology_Use <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb46-9" title="9"><span class="st">      </span><span class="kw">select</span>(VibrentID, TypeSphone),</a>
+<a class="sourceLine" id="cb46-10" title="10">    <span class="dt">by =</span> <span class="st">&quot;VibrentID&quot;</span></a>
+<a class="sourceLine" id="cb46-11" title="11">  ) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb46-12" title="12"><span class="st">  </span><span class="kw">left_join</span>(sqlGoal, <span class="dt">by =</span> <span class="st">&quot;VibrentID&quot;</span>)</a></code></pre></div>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="01-Data_Collection.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="03-TableOne.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": false,
+"twitter": false,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["twitter", "facebook", "google", "weibo", "instapaper"],
+"google": false,
+"instapper": false
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": null,
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": null,
+"toc": {
+"collapse": "section",
+"depth": 3,
+"scroll_highlight": true
+},
+"df_print": "kable",
+"highlight": "pygments",
+"search": true
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>
